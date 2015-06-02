@@ -643,9 +643,9 @@ public abstract class PircBot implements ReplyConstants {
      * do anything useful.
      * <p>
      * Some IRC servers support certain parameters for LIST requests. One
-     * example is a parameter of ">10" to list only those channels that have
-     * more than 10 users in them. Whether these parameters are supported or not
-     * will depend on the IRC server software.
+     * example is a parameter of "greater than 10" to list only those channels
+     * that have more than 10 users in them. Whether these parameters are
+     * supported or not will depend on the IRC server software.
      *
      * @param parameters The parameters to supply when requesting the list.
      *
@@ -767,9 +767,9 @@ public abstract class PircBot implements ReplyConstants {
      * number which represents the logging time (as the number of milliseconds
      * since the epoch). This timestamp and the following log entry are
      * separated by a single space character, " ". Outgoing messages are
-     * distinguishable by a log entry that has ">>>" immediately following the
-     * space character after the timestamp. DCC events use "+++" and warnings
-     * about unhandled Exceptions and Errors use "###".
+     * distinguishable by a log entry that has three greater than symbols
+     * immediately following the space character after the timestamp. DCC events
+     * use "+++" and warnings about unhandled Exceptions and Errors use "###".
      * <p>
      * This implementation of the method will only cause log entries to be
      * output if the PircBot has had its verbose mode turned on by calling
@@ -902,7 +902,7 @@ public abstract class PircBot implements ReplyConstants {
         } else if (command.equals("JOIN")) {
             // Someone is joining a channel.
             String channel = target;
-            this.addUser(channel, new User(sourceNick,channel));
+            this.addUser(channel, new User(sourceNick, channel));
             this.onJoin(channel, sourceNick, sourceLogin, sourceHostname);
         } else if (command.equals("PART")) {
             // Someone is parting from a channel.
@@ -1070,7 +1070,7 @@ public abstract class PircBot implements ReplyConstants {
                     prefix = ".";
                 }
                 nick = nick.substring(prefix.length());
-                this.addUser(channel, new User(nick,channel));
+                this.addUser(channel, new User(nick, channel));
             }
         } else if (code == RPL_ENDOFNAMES) {
             // This is the end of a NAMES list, so we know that we've got
@@ -2598,19 +2598,84 @@ public abstract class PircBot implements ReplyConstants {
      * instance as this PircBot. This may be useful if you are writing a
      * multiple server IRC bot that uses more than one instance of PircBot.
      *
-     * @param o
+     * @param obj
      * @since PircBot 0.9.9
      *
      * @return true if and only if Object o is a PircBot and equal to this.
      */
     @Override
-    public boolean equals(Object o) {
-        // This probably has the same effect as Object.equals, but that may change...
-        if (o instanceof PircBot) {
-            PircBot other = (PircBot) o;
-            return other == this;
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
-        return false;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PircBot other = (PircBot) obj;
+        if (!Objects.equals(this._inputThread, other._inputThread)) {
+            return false;
+        }
+        if (!Objects.equals(this._outputThread, other._outputThread)) {
+            return false;
+        }
+        if (!Objects.equals(this._charset, other._charset)) {
+            return false;
+        }
+        if (!Objects.equals(this._inetAddress, other._inetAddress)) {
+            return false;
+        }
+        if (!Objects.equals(this._server, other._server)) {
+            return false;
+        }
+        if (this._port != other._port) {
+            return false;
+        }
+        if (!Objects.equals(this._password, other._password)) {
+            return false;
+        }
+        if (!Objects.equals(this._outQueue, other._outQueue)) {
+            return false;
+        }
+        if (this._messageDelay != other._messageDelay) {
+            return false;
+        }
+        if (!Objects.equals(this._channels, other._channels)) {
+            return false;
+        }
+        if (!Objects.equals(this._topics, other._topics)) {
+            return false;
+        }
+        if (!Objects.equals(this._dccManager, other._dccManager)) {
+            return false;
+        }
+        if (!Arrays.equals(this._dccPorts, other._dccPorts)) {
+            return false;
+        }
+        if (!Objects.equals(this._dccInetAddress, other._dccInetAddress)) {
+            return false;
+        }
+        if (this._autoNickChange != other._autoNickChange) {
+            return false;
+        }
+        if (this._verbose != other._verbose) {
+            return false;
+        }
+        if (!Objects.equals(this._name, other._name)) {
+            return false;
+        }
+        if (!Objects.equals(this._nick, other._nick)) {
+            return false;
+        }
+        if (!Objects.equals(this._login, other._login)) {
+            return false;
+        }
+        if (!Objects.equals(this._version, other._version)) {
+            return false;
+        }
+        if (!Objects.equals(this._finger, other._finger)) {
+            return false;
+        }
+        return Objects.equals(this._channelPrefixes, other._channelPrefixes);
     }
 
     /**
@@ -2624,7 +2689,30 @@ public abstract class PircBot implements ReplyConstants {
      */
     @Override
     public int hashCode() {
-        return super.hashCode();
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this._inputThread);
+        hash = 67 * hash + Objects.hashCode(this._outputThread);
+        hash = 67 * hash + Objects.hashCode(this._charset);
+        hash = 67 * hash + Objects.hashCode(this._inetAddress);
+        hash = 67 * hash + Objects.hashCode(this._server);
+        hash = 67 * hash + this._port;
+        hash = 67 * hash + Objects.hashCode(this._password);
+        hash = 67 * hash + Objects.hashCode(this._outQueue);
+        hash = 67 * hash + (int) (this._messageDelay ^ (this._messageDelay >>> 32));
+        hash = 67 * hash + Objects.hashCode(this._channels);
+        hash = 67 * hash + Objects.hashCode(this._topics);
+        hash = 67 * hash + Objects.hashCode(this._dccManager);
+        hash = 67 * hash + Arrays.hashCode(this._dccPorts);
+        hash = 67 * hash + Objects.hashCode(this._dccInetAddress);
+        hash = 67 * hash + (this._autoNickChange ? 1 : 0);
+        hash = 67 * hash + (this._verbose ? 1 : 0);
+        hash = 67 * hash + Objects.hashCode(this._name);
+        hash = 67 * hash + Objects.hashCode(this._nick);
+        hash = 67 * hash + Objects.hashCode(this._login);
+        hash = 67 * hash + Objects.hashCode(this._version);
+        hash = 67 * hash + Objects.hashCode(this._finger);
+        hash = 67 * hash + Objects.hashCode(this._channelPrefixes);
+        return hash;
     }
 
     /**
@@ -2768,7 +2856,7 @@ public abstract class PircBot implements ReplyConstants {
      */
     private User removeUser(String channel, String nick) {
         channel = channel.toLowerCase();
-        User user = new User(nick,channel);
+        User user = new User(nick, channel);
         synchronized (_channels) {
             ConcurrentHashMap users = (ConcurrentHashMap) _channels.get(channel);
             if (users != null) {

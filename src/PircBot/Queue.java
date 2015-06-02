@@ -32,6 +32,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class Queue {
 
+    private final ConcurrentLinkedQueue _queue;
+    private int size;
+
     /**
      * Constructs a Queue object of unlimited size.
      */
@@ -51,6 +54,12 @@ public class Queue {
         this.size = size;
     }
 
+    /**
+     * Checks the Queue to see if it contains the parameter.
+     *
+     * @param o Object to check for
+     * @return True if contained in queue, false otherwise
+     */
     public boolean contains(Object o) {
         synchronized (_queue) {
             Object[] array = _queue.toArray();
@@ -81,19 +90,7 @@ public class Queue {
 
         }
     }
-
-//    /**
-//     * Adds an Object to the front of the Queue.
-//     *
-//     * @param o The Object to be added to the Queue.
-//     */
-//    public void addFront(Object o) {
-//        synchronized (_queue) {
-//            //_queue.insertElementAt(o, 0);
-//            _queue.
-//            _queue.notify();
-//        }
-//    }
+    
     public int messageCount() {
         int count = 0;
         synchronized (_queue) {
@@ -131,7 +128,6 @@ public class Queue {
             // Return the Object.
             try {
                 o = _queue.poll();
-                //_queue.removeElementAt(0);
             } catch (ArrayIndexOutOfBoundsException e) {
                 throw new InternalError("Race hazard in Queue object.");
             }
@@ -157,7 +153,6 @@ public class Queue {
     public void clear() {
         synchronized (_queue) {
             _queue.clear();
-            //_queue.removeAllElements();
         }
     }
 
@@ -178,9 +173,5 @@ public class Queue {
     public void setMessageSize(int size) {
         this.size = size;
     }
-
-    //private Vector _queue = new Vector();
-    private final ConcurrentLinkedQueue _queue;
-    private int size;
 
 }

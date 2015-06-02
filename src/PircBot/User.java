@@ -46,18 +46,12 @@ public class User {
         return false;
     }
 
-//    /**
-//     * Constructs a User object with a known prefix and nick.
-//     *
-//     * @param prefix The status of the user, for example, "@".
-//     * @param nick The nick of the user.
-//     */
-//    public User(String prefix, String nick) {
-//        _prefix = prefix;
-//        _nick = nick;
-//        this.lastMessage = System.currentTimeMillis();
-//        this.isAFK = false;
-//    }
+    /**
+     * Constructs a new user object
+     *
+     * @param name Name of the user
+     * @param channel Channel user is in
+     */
     public User(String name, String channel) {
         _nick = name;
         _channel = channel;
@@ -67,6 +61,13 @@ public class User {
         this.isVoice = false;
     }
 
+    /**
+     * Constructs a new user object
+     *
+     * @param name Name of the user
+     * @param channel Channel user is in
+     * @param lastMessage Last Message received time
+     */
     public User(String name, String channel, long lastMessage) {
         _nick = name;
         _channel = channel;
@@ -76,6 +77,14 @@ public class User {
         this.isVoice = false;
     }
 
+    /**
+     * Constructs a new user object
+     *
+     * @param name Name of the user
+     * @param channel Channel user is in
+     * @param lastMessage Last Message received time
+     * @param afk Is user AFK?
+     */
     public User(String name, String channel, long lastMessage, boolean afk) {
         _nick = name;
         _channel = channel;
@@ -85,6 +94,16 @@ public class User {
         this.isVoice = false;
     }
 
+    /**
+     * Constructs a new user object
+     *
+     * @param _nick Name of the user
+     * @param _channel Channel user is in
+     * @param lastMessage Last Message received time
+     * @param isAFK Is user AFK?
+     * @param isOP Is user OP?
+     * @param isVoice Is user voiced?
+     */
     public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice) {
         this._nick = _nick;
         this.lastMessage = lastMessage;
@@ -94,31 +113,62 @@ public class User {
         this._channel = _channel;
     }
 
+    /**
+     * Constructs a new user object from an existing user object.
+     *
+     * @param user User object to use
+     * @param channel Channel user is in
+     */
     public User(User user, String channel) {
         _nick = user.getNick();
         _channel = channel;
         this.lastMessage = System.currentTimeMillis();
-        this.isAFK = false;
-        this.isOP = false;
-        this.isVoice = false;
+        this.isAFK = user.isAFK;
+        this.isOP = user.isOP;
+        this.isVoice = user.isVoice;
     }
 
+    /**
+     * Changes the name of the user
+     *
+     * @param name New name of the user
+     */
     public void changeName(String name) {
         _nick = name;
     }
 
+    /**
+     * Returns the current channel of the user
+     *
+     * @return channel of the user
+     */
     public String getChannel() {
         return _channel;
     }
 
+    /**
+     * Sets the current channel of the user
+     *
+     * @param channel New Channel to set
+     */
     public void setChannel(String channel) {
         _channel = channel;
     }
 
+    /**
+     * Returns the time of the last message by the user
+     *
+     * @return Last message time of the user
+     */
     public long getLastMessage() {
         return lastMessage;
     }
 
+    /**
+     * Sets the time of the last message by the user
+     *
+     * @param lastMessage Last message
+     */
     public void setLastMessage(long lastMessage) {
         this.lastMessage = lastMessage;
     }
@@ -132,6 +182,11 @@ public class User {
         return _nick;
     }
 
+    /**
+     * Determines if a user is AFK or not
+     *
+     * @return True if user is AFK, false otherwise
+     */
     public boolean isAFK() {
         if (isBot(this.getNick())) {
             return false;
@@ -144,22 +199,47 @@ public class User {
         return isAFK;
     }
 
+    /**
+     * Sets if the user is AFK
+     *
+     * @param afk Is user AFK?
+     */
     public void setAFK(boolean afk) {
         this.isAFK = afk;
     }
 
+    /**
+     * Checks if the user is a channel operator
+     *
+     * @return True if opped, false otherwise
+     */
     public boolean isOP() {
         return isOP;
     }
 
+    /**
+     * Sets if the user is a channel operator
+     *
+     * @param isOP Is user opped?
+     */
     public void setOP(boolean isOP) {
         this.isOP = isOP;
     }
 
+    /**
+     * Checks if the user has room voice
+     *
+     * @return True if room voiced, false otherwise
+     */
     public boolean isVoice() {
         return isVoice;
     }
 
+    /**
+     * Sets if the user is room voiced
+     *
+     * @param isVoice Is the user room voiced?
+     */
     public void setVoice(boolean isVoice) {
         this.isVoice = isVoice;
     }
@@ -172,14 +252,6 @@ public class User {
         return op + "" + voice + "" + _nick + " " + afk + " (" + _channel + ")";
     }
 
-    /**
-     * Returns true if the nick represented by this User object is the same as
-     * the nick of the User object given as an argument. A case insensitive
-     * comparison is made.
-     *
-     * @param obj
-     * @return true if o is a User object with a matching lowercase nick.
-     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
