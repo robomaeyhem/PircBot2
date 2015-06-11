@@ -305,7 +305,7 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param channel The name of the channel to join (eg "#cs").
      */
-    public final void joinChannel(String channel) {
+    public void joinChannel(String channel) {
         this.sendRawLine("JOIN " + channel);
     }
 
@@ -315,7 +315,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param channel The name of the channel to join (eg "#cs").
      * @param key The key that will be used to join the channel.
      */
-    public final void joinChannel(String channel, String key) {
+    public void joinChannel(String channel, String key) {
         this.joinChannel(channel + " " + key);
     }
 
@@ -324,7 +324,7 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param channel The name of the channel to leave.
      */
-    public final void partChannel(String channel) {
+    public void partChannel(String channel) {
         this.sendRawLine("PART " + channel);
     }
 
@@ -334,7 +334,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param channel The name of the channel to leave.
      * @param reason The reason for parting the channel.
      */
-    public final void partChannel(String channel, String reason) {
+    public void partChannel(String channel, String reason) {
         this.sendRawLine("PART " + channel + " :" + reason);
     }
 
@@ -406,6 +406,16 @@ public abstract class PircBot implements ReplyConstants {
      */
     public void sendMessage(String target, String message) {
         _outQueue.add("PRIVMSG " + target + " :" + message);
+    }
+
+    /**
+     * Sends a whisper to the server. This is used mainly for Twitch TV.
+     *
+     * @param target Target to send the Whisper to
+     * @param message Message to send to the target.
+     */
+    public void sendWhisper(String target, String message) {
+        _outQueue.add("PRIVMSG #jtv :/w " + target + " " + message);
     }
 
     /**
@@ -899,6 +909,9 @@ public abstract class PircBot implements ReplyConstants {
         } else if (command.equals("PRIVMSG")) {
             // This is a private message to us.
             this.onPrivateMessage(sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
+        } else if (command.equals("WHISPER")) {
+            // Whisper to us.
+            this.onWhisper(sourceHostname, sourceNick, line.split("WHISPER ", 2)[1].split(" :", 2)[0], line.split(" :", 2)[1]);
         } else if (command.equals("JOIN")) {
             // Someone is joining a channel.
             String channel = target;
@@ -1333,6 +1346,19 @@ public abstract class PircBot implements ReplyConstants {
      * @see #listChannels() listChannels
      */
     protected void onChannelInfo(String channel, int userCount, String topic) {
+    }
+
+    /**
+     * Called when a whisper is received to the bot. This is mainly used with
+     * Twitch TV.
+     *
+     * @param hostname Hostname of the user sending the Whisper
+     * @param sender Nickname of the user sending the Whisper
+     * @param target Who the Whisper is for
+     * @param message Whisper Message
+     */
+    protected void onWhisper(String hostname, String sender, String target, String message) {
+
     }
 
     /**

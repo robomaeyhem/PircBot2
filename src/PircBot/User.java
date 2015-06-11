@@ -35,6 +35,7 @@ public class User {
     private boolean isVoice;
     private String _channel;
     private static String[] bots = {"wow_deku_onehand", "lavasbot", "facts_bot", "totally_not_facts_bot", "23forces", "twitchplaysleaderboard", "recordingbot", "twitchnotify", "io_ol7bot"};
+    private String previousMessage;
 
     public static boolean isBot(String username) {
         username = username.toLowerCase();
@@ -59,6 +60,7 @@ public class User {
         this.isAFK = false;
         this.isOP = false;
         this.isVoice = false;
+        previousMessage = "";
     }
 
     /**
@@ -75,6 +77,7 @@ public class User {
         this.isAFK = false;
         this.isOP = false;
         this.isVoice = false;
+        previousMessage = "";
     }
 
     /**
@@ -92,6 +95,7 @@ public class User {
         this.isAFK = afk;
         this.isOP = false;
         this.isVoice = false;
+        previousMessage = "";
     }
 
     /**
@@ -111,6 +115,7 @@ public class User {
         this.isOP = isOP;
         this.isVoice = isVoice;
         this._channel = _channel;
+        previousMessage = "";
     }
 
     /**
@@ -126,6 +131,7 @@ public class User {
         this.isAFK = user.isAFK;
         this.isOP = user.isOP;
         this.isVoice = user.isVoice;
+        previousMessage = "";
     }
 
     /**
@@ -243,6 +249,22 @@ public class User {
     public void setVoice(boolean isVoice) {
         this.isVoice = isVoice;
     }
+    /**
+     * Gets the last message sent by this user
+     * @return Last Message sent by the user
+     */
+    public String getPreviousMessage() {
+        return previousMessage;
+    }
+    /**
+     * Sets the last message sent by this user
+     * @param previousMessage Message
+     */
+    public void setPreviousMessage(String previousMessage) {
+        this.previousMessage = previousMessage;
+    }
+    
+    
 
     @Override
     public String toString() {
