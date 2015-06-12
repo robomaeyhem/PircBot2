@@ -36,6 +36,11 @@ public class User {
     private String _channel;
     private static String[] bots = {"wow_deku_onehand", "lavasbot", "facts_bot", "totally_not_facts_bot", "23forces", "twitchplaysleaderboard", "recordingbot", "twitchnotify", "io_ol7bot"};
     private String previousMessage;
+    private String color;
+    private String emotes;
+    private boolean subscriber;
+    private boolean turbo;
+    private String userType;
 
     public static boolean isBot(String username) {
         username = username.toLowerCase();
@@ -61,6 +66,11 @@ public class User {
         this.isOP = false;
         this.isVoice = false;
         previousMessage = "";
+        color = "";
+        emotes = "";
+        subscriber = false;
+        turbo = false;
+        userType = "";
     }
 
     /**
@@ -78,6 +88,11 @@ public class User {
         this.isOP = false;
         this.isVoice = false;
         previousMessage = "";
+        color = "";
+        emotes = "";
+        subscriber = false;
+        turbo = false;
+        userType = "";
     }
 
     /**
@@ -96,6 +111,11 @@ public class User {
         this.isOP = false;
         this.isVoice = false;
         previousMessage = "";
+        color = "";
+        emotes = "";
+        subscriber = false;
+        turbo = false;
+        userType = "";
     }
 
     /**
@@ -116,6 +136,11 @@ public class User {
         this.isVoice = isVoice;
         this._channel = _channel;
         previousMessage = "";
+        color = "";
+        emotes = "";
+        subscriber = false;
+        turbo = false;
+        userType = "";
     }
 
     /**
@@ -132,6 +157,11 @@ public class User {
         this.isOP = user.isOP;
         this.isVoice = user.isVoice;
         previousMessage = "";
+        color = "";
+        emotes = "";
+        subscriber = false;
+        turbo = false;
+        userType = "";
     }
 
     /**
@@ -262,6 +292,46 @@ public class User {
      */
     public void setPreviousMessage(String previousMessage) {
         this.previousMessage = previousMessage;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getEmotes() {
+        return emotes;
+    }
+
+    public void setEmotes(String emotes) {
+        this.emotes = emotes;
+    }
+
+    public boolean isSubscriber() {
+        return subscriber;
+    }
+
+    public void setSubscriber(boolean subscriber) {
+        this.subscriber = subscriber;
+    }
+
+    public boolean isTurbo() {
+        return turbo;
+    }
+
+    public void setTurbo(boolean turbo) {
+        this.turbo = turbo;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
     
     
