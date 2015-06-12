@@ -933,7 +933,6 @@ public abstract class PircBot implements ReplyConstants {
             String userType = ircTags.split("\\;user-type=", 2)[1].split("\\;", 2)[0];
             updateUser(sourceNick, color, emotes, subscriber, turbo, userType);
         }
-
         // Check for CTCP requests.
         if (command.equals("PRIVMSG") && line.indexOf(":\u0001") > 0 && line.endsWith("\u0001")) {
             String request = line.substring(line.indexOf(":\u0001") + 2, line.length() - 1);
@@ -943,6 +942,8 @@ public abstract class PircBot implements ReplyConstants {
             } else if (request.startsWith("ACTION ")) {
                 // ACTION request
                 this.onAction(sourceNick, sourceLogin, sourceHostname, target, request.substring(7));
+                this.updateUserLastMessage(target, sourceNick, request.substring(7));
+                this.updateUserAFK(target, sourceNick, false);
             } else if (request.startsWith("PING ")) {
                 // PING request
                 this.onPing(sourceNick, sourceLogin, sourceHostname, target, request.substring(5));
@@ -966,6 +967,8 @@ public abstract class PircBot implements ReplyConstants {
         } else if (command.equals("PRIVMSG") && _channelPrefixes.indexOf(target.charAt(0)) >= 0) {
             // This is a normal message to a channel.
             this.onMessage(target, sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
+            this.updateUserLastMessage(target, sourceNick, line.substring(line.indexOf(" :") + 2));
+            this.updateUserAFK(target, sourceNick, false);
         } else if (command.equals("PRIVMSG")) {
             // This is a private message to us.
             this.onPrivateMessage(sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
@@ -2987,6 +2990,29 @@ public abstract class PircBot implements ReplyConstants {
     private void removeAllChannels() {
         synchronized (_channels) {
             _channels.clear();
+        }
+    }
+
+    protected void updateUserAFK(String channel, String username, boolean afk) {
+        synchronized (_channels) {
+            ArrayList<User> userlist = _channels.get(channel);
+            for (User el : userlist) {
+                if (el.getNick().equalsIgnoreCase(username)) {
+                    el.setAFK(afk);
+                }
+            }
+        }
+    }
+
+    protected void updateUserLastMessage(String channel, String username, String lastMessage) {
+        synchronized (_channels) {
+            ArrayList<User> userlist = _channels.get(channel);
+            for (User el : userlist) {
+                if (el.getNick().equalsIgnoreCase(username)) {
+                    el.setLastMessage(System.currentTimeMillis());
+                    el.setPreviousMessage(lastMessage);
+                }
+            }
         }
     }
 
