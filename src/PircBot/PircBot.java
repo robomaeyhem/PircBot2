@@ -2996,6 +2996,10 @@ public abstract class PircBot implements ReplyConstants {
     protected void updateUserAFK(String channel, String username, boolean afk) {
         synchronized (_channels) {
             ArrayList<User> userlist = _channels.get(channel);
+            if(userlist == null){
+                _channels.put(channel, new ArrayList<>());
+                return;
+            }
             for (User el : userlist) {
                 if (el.getNick().equalsIgnoreCase(username)) {
                     el.setAFK(afk);
@@ -3006,7 +3010,11 @@ public abstract class PircBot implements ReplyConstants {
 
     protected void updateUserLastMessage(String channel, String username, String lastMessage) {
         synchronized (_channels) {
-            ArrayList<User> userlist = _channels.get(channel);
+            ArrayList<User> userlist = _channels.get(channel);            
+            if(userlist == null){
+                _channels.put(channel, new ArrayList<>());
+                return;
+            }
             for (User el : userlist) {
                 if (el.getNick().equalsIgnoreCase(username)) {
                     el.setLastMessage(System.currentTimeMillis());
