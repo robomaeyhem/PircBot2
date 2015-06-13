@@ -925,7 +925,12 @@ public abstract class PircBot implements ReplyConstants {
         }
         if (containsIRC3) {
             String color = ircTags.split("\\;", 2)[0];
-            String emotes = ircTags.split("\\;emotes=", 2)[1].split("\\;subscriber", 2)[0];
+            String emotes = "";
+            try{
+                emotes = ircTags.split("\\;emotes=", 2)[1].split("\\;subscriber", 2)[0];
+            }catch(ArrayIndexOutOfBoundsException ex){
+                emotes = ircTags.split("\\;emote-sets=", 2)[1].split("\\;emotesets", 2)[0];
+            }
             int subBuffer = Integer.parseInt(ircTags.split("\\;subscriber=", 2)[1].split("\\;", 2)[0]);
             boolean subscriber = (subBuffer == 1);
             int turboBuffer = Integer.parseInt(ircTags.split("\\;turbo=", 2)[1].split("\\;", 2)[0]);
