@@ -452,11 +452,15 @@ public abstract class PircBot implements ReplyConstants {
      * order to use this, you must send <code>CAP REQ :twitch.tv/commands</code>
      * to the server, or else WHISPERs cannot be sent or received to the bot.
      *
+     * @param channel Channel to send the Whisper through
      * @param target Target to send the Whisper to
      * @param message Message to send to the target.
      */
-    public void sendWhisper(String target, String message) {
-        _outQueue.add("PRIVMSG #jtv :/w " + target + " " + message);
+    public void sendWhisper(String channel, String target, String message) {
+        if (channel.charAt(0) != '#') {
+            channel = "#" + channel;
+        }
+        _outQueue.add("PRIVMSG " + channel + " :/w " + target + " " + message);
     }
 
     /**
