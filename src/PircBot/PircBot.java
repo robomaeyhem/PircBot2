@@ -2946,10 +2946,15 @@ public abstract class PircBot implements ReplyConstants {
      */
     private boolean removeUser(String channel, String nick) {
         channel = channel.toLowerCase();
-        User user = new User(nick, channel);
         synchronized (_channels) {
             ArrayList<User> users = _channels.get(channel);
-            if (users != null) {
+            User user = null;
+            for (User el : users) {
+                if (el.getNick().equalsIgnoreCase(nick)) {
+                    user = el;
+                }
+            }
+            if (users != null && user != null) {
                 return users.remove(user);
             }
         }
