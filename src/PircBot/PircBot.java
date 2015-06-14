@@ -457,6 +457,9 @@ public abstract class PircBot implements ReplyConstants {
      * @param message Message to send to the target.
      */
     public void sendWhisper(String channel, String target, String message) {
+        if(channel.isEmpty()){
+            channel = "#jtv";
+        }
         if (channel.charAt(0) != '#') {
             channel = "#" + channel;
         }
