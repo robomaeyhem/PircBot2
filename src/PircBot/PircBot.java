@@ -926,12 +926,18 @@ public abstract class PircBot implements ReplyConstants {
         if (containsIRC3) {
             String color = ircTags.split("\\;", 2)[0];
             String emotes = "";
-            try{
-                emotes = ircTags.split("\\;emotes=", 2)[1].split("\\;subscriber", 2)[0];
-            }catch(ArrayIndexOutOfBoundsException ex){
-                emotes = ircTags.split("\\;emote-sets=", 2)[1].split("\\;emotesets", 2)[0];
+            try {
+                emotes = ircTags.split("\\;emotes=", 2)[1].split("\\;", 2)[0];
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                emotes = ircTags.split("\\;emote-sets=", 2)[1].split("\\;", 2)[0];
             }
-            int subBuffer = Integer.parseInt(ircTags.split("\\;subscriber=", 2)[1].split("\\;", 2)[0]);
+            int subBuffer = 0;
+            try {
+                subBuffer = Integer.parseInt(ircTags.split("\\;subscriber=", 2)[1].split("\\;", 2)[0]);
+            } catch (Exception ex) {
+                subBuffer = 0;
+            }
+
             boolean subscriber = (subBuffer == 1);
             int turboBuffer = Integer.parseInt(ircTags.split("\\;turbo=", 2)[1].split("\\;", 2)[0]);
             boolean turbo = (turboBuffer == 1);
@@ -3001,7 +3007,7 @@ public abstract class PircBot implements ReplyConstants {
     protected void updateUserAFK(String channel, String username, boolean afk) {
         synchronized (_channels) {
             ArrayList<User> userlist = _channels.get(channel);
-            if(userlist == null){
+            if (userlist == null) {
                 _channels.put(channel, new ArrayList<>());
                 return;
             }
@@ -3015,8 +3021,8 @@ public abstract class PircBot implements ReplyConstants {
 
     protected void updateUserLastMessage(String channel, String username, String lastMessage) {
         synchronized (_channels) {
-            ArrayList<User> userlist = _channels.get(channel);            
-            if(userlist == null){
+            ArrayList<User> userlist = _channels.get(channel);
+            if (userlist == null) {
                 _channels.put(channel, new ArrayList<>());
                 return;
             }
