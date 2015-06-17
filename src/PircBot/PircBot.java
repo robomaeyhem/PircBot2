@@ -63,7 +63,7 @@ public abstract class PircBot implements ReplyConstants {
      * this before automatically building releases)
      */
     public static final String VERSION = "1.5.1";
-
+    
     private static final int OP_ADD = 1;
     private static final int OP_REMOVE = 2;
     private static final int VOICE_ADD = 3;
@@ -105,7 +105,7 @@ public abstract class PircBot implements ReplyConstants {
     private String _login = "PircBot";
     private String _version = "PircBot " + VERSION + " Java IRC Bot - www.jibble.org";
     private String _finger = "You ought to be arrested for fingering a bot!";
-
+    
     private String _channelPrefixes = "#&+!";
 
     /**
@@ -161,11 +161,11 @@ public abstract class PircBot implements ReplyConstants {
      * server.
      */
     public final synchronized void connect(String hostname, int port, String password) throws IOException, IrcException, NickAlreadyInUseException {
-
+        
         _server = hostname;
         _port = port;
         _password = password;
-
+        
         if (isConnected()) {
             throw new IOException("The PircBot is already connected to an IRC server.  Disconnect first.");
         }
@@ -177,9 +177,9 @@ public abstract class PircBot implements ReplyConstants {
         // Connect to the server.
         Socket socket = new Socket(hostname, port);
         this.log("*** Connected to server.");
-
+        
         _inetAddress = socket.getLocalAddress();
-
+        
         InputStreamReader inputStreamReader = null;
         OutputStreamWriter outputStreamWriter = null;
         if (getEncoding() != null) {
@@ -191,7 +191,7 @@ public abstract class PircBot implements ReplyConstants {
             inputStreamReader = new InputStreamReader(socket.getInputStream());
             outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
         }
-
+        
         BufferedReader breader = new BufferedReader(inputStreamReader);
         BufferedWriter bwriter = new BufferedWriter(outputStreamWriter);
 
@@ -202,21 +202,21 @@ public abstract class PircBot implements ReplyConstants {
         String nick = this.getName();
         OutputThread.sendRawLine(this, bwriter, "NICK " + nick);
         OutputThread.sendRawLine(this, bwriter, "USER " + this.getLogin() + " 8 * :" + this.getVersion());
-
+        
         _inputThread = new InputThread(this, socket, breader, bwriter);
 
         // Read stuff back from the server to see if we connected.
         String line = null;
         int tries = 1;
         while ((line = breader.readLine()) != null) {
-
+            
             this.handleLine(line);
-
+            
             int firstSpace = line.indexOf(" ");
             int secondSpace = line.indexOf(" ", firstSpace + 1);
             if (secondSpace >= 0) {
                 String code = line.substring(firstSpace + 1, secondSpace);
-
+                
                 if (code.equals("004")) {
                     // We're connected to the server.
                     break;
@@ -239,9 +239,9 @@ public abstract class PircBot implements ReplyConstants {
                 }
             }
             this.setNick(nick);
-
+            
         }
-
+        
         this.log("*** Logged onto server.");
 
         // This makes the socket timeout on read operations after 5 minutes.
@@ -256,9 +256,9 @@ public abstract class PircBot implements ReplyConstants {
             _outputThread = new OutputThread(this, _outQueue);
             _outputThread.start();
         }
-
+        
         this.onConnect();
-
+        
     }
 
     /**
@@ -457,7 +457,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param message Message to send to the target.
      */
     public void sendWhisper(String channel, String target, String message) {
-        if(channel.isEmpty()){
+        if (channel.isEmpty()) {
             channel = "#jtv";
         }
         if (channel.charAt(0) != '#') {
@@ -771,7 +771,7 @@ public abstract class PircBot implements ReplyConstants {
         DccChat chat = null;
         try {
             ServerSocket ss = null;
-
+            
             int[] ports = getDccPorts();
             if (ports == null) {
                 // Use any free port.
@@ -791,17 +791,17 @@ public abstract class PircBot implements ReplyConstants {
                     throw new IOException("All ports returned by getDccPorts() are in use.");
                 }
             }
-
+            
             ss.setSoTimeout(timeout);
             int port = ss.getLocalPort();
-
+            
             InetAddress inetAddress = getDccInetAddress();
             if (inetAddress == null) {
                 inetAddress = getInetAddress();
             }
             byte[] ip = inetAddress.getAddress();
             long ipNum = ipToLong(ip);
-
+            
             sendCTCPCommand(nick, "DCC CHAT chat " + ipNum + " " + port);
 
             // The client may now connect to us to chat.
@@ -809,7 +809,7 @@ public abstract class PircBot implements ReplyConstants {
 
             // Close the server socket now that we've finished with it.
             ss.close();
-
+            
             chat = new DccChat(this, nick, socket);
         } catch (Exception e) {
             // Do nothing.
@@ -859,13 +859,13 @@ public abstract class PircBot implements ReplyConstants {
             this.onServerPing(line.substring(5));
             return;
         }
-
+        
         String sourceNick = "";
         String sourceLogin = "";
         String sourceHostname = "";
         boolean containsIRC3 = false;
         String ircTags = "";
-
+        
         StringTokenizer tokenizer = new StringTokenizer(line);
         String senderInfo = tokenizer.nextToken();
         //twitch tags fix
@@ -877,7 +877,7 @@ public abstract class PircBot implements ReplyConstants {
         }
         String command = tokenizer.nextToken();
         String target = null;
-
+        
         int exclamation = senderInfo.indexOf("!");
         int at = senderInfo.indexOf("@");
         if (senderInfo.startsWith(":")) {
@@ -886,17 +886,17 @@ public abstract class PircBot implements ReplyConstants {
                 sourceLogin = senderInfo.substring(exclamation + 1, at);
                 sourceHostname = senderInfo.substring(at + 1);
             } else {
-
+                
                 if (tokenizer.hasMoreTokens()) {
                     String token = command;
-
+                    
                     int code = -1;
                     try {
                         code = Integer.parseInt(token);
                     } catch (NumberFormatException e) {
                         // Keep the existing value.
                     }
-
+                    
                     if (code != -1) {
                         String errorStr = token;
                         String response = line.substring(line.indexOf(errorStr, senderInfo.length()) + 4, line.length());
@@ -916,10 +916,10 @@ public abstract class PircBot implements ReplyConstants {
                     // Return from the method;
                     return;
                 }
-
+                
             }
         }
-
+        
         command = command.toUpperCase();
         if (sourceNick.startsWith(":")) {
             sourceNick = sourceNick.substring(1);
@@ -931,6 +931,12 @@ public abstract class PircBot implements ReplyConstants {
             target = target.substring(1);
         }
         if (containsIRC3) {
+            String name = "";
+            try {
+                name = ircTags.split("\\;display-name=", 2)[1].split("\\;", 2)[0];
+            } catch (Exception ex) {
+            }
+            
             String color = ircTags.split("\\;", 2)[0];
             String emotes = "";
             try {
@@ -944,12 +950,15 @@ public abstract class PircBot implements ReplyConstants {
             } catch (Exception ex) {
                 subBuffer = 0;
             }
-
+            
             boolean subscriber = (subBuffer == 1);
             int turboBuffer = Integer.parseInt(ircTags.split("\\;turbo=", 2)[1].split("\\;", 2)[0]);
             boolean turbo = (turboBuffer == 1);
             String userType = ircTags.split("\\;user-type=", 2)[1].split("\\;", 2)[0];
             updateUser(sourceNick, color, emotes, subscriber, turbo, userType);
+            if (!name.isEmpty() || name.equalsIgnoreCase("")) {
+                updateUser(sourceNick, name);
+            }
         }
         // Check for CTCP requests.
         if (command.equals("PRIVMSG") && line.indexOf(":\u0001") > 0 && line.endsWith("\u0001")) {
@@ -1051,7 +1060,7 @@ public abstract class PircBot implements ReplyConstants {
             // Doesn't currently deal with.
             this.onUnknown(line);
         }
-
+        
     }
 
     /**
@@ -1100,7 +1109,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param response The full response from the IRC server.
      */
     private void processServerResponse(int code, String response) {
-
+        
         if (code == RPL_LIST) {
             // This is a bit of information about a channel.
             int firstSpace = response.indexOf(' ');
@@ -1123,7 +1132,7 @@ public abstract class PircBot implements ReplyConstants {
             int colon = response.indexOf(':');
             String channel = response.substring(firstSpace + 1, secondSpace);
             String topic = response.substring(colon + 1);
-
+            
             _topics.put(channel, topic);
 
             // For backwards compatibility only - this onTopic method is deprecated.
@@ -1139,16 +1148,16 @@ public abstract class PircBot implements ReplyConstants {
             } catch (NumberFormatException e) {
                 // Stick with the default value of zero.
             }
-
+            
             String topic = _topics.get(channel);
             _topics.remove(channel);
-
+            
             this.onTopic(channel, topic, setBy, date, false);
         } else if (code == RPL_NAMREPLY) {
             // This is a list of nicks in a channel that we've just joined.
             int channelEndIndex = response.indexOf(" :");
             String channel = response.substring(response.lastIndexOf(' ', channelEndIndex - 1) + 1, channelEndIndex);
-
+            
             StringTokenizer tokenizer = new StringTokenizer(response.substring(response.indexOf(" :") + 2));
             while (tokenizer.hasMoreTokens()) {
                 String nick = tokenizer.nextToken();
@@ -1173,7 +1182,7 @@ public abstract class PircBot implements ReplyConstants {
             ArrayList<User> users = this.getUsers(channel);
             this.onUserList(channel, users);
         }
-
+        
         this.onServerResponse(code, response);
     }
 
@@ -1439,7 +1448,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param message Whisper Message
      */
     protected void onWhisper(String hostname, String sender, String target, String message) {
-
+        
     }
 
     /**
@@ -1457,19 +1466,19 @@ public abstract class PircBot implements ReplyConstants {
      * @param mode The mode that has been set.
      */
     private void processMode(String target, String sourceNick, String sourceLogin, String sourceHostname, String mode) {
-
+        
         if (_channelPrefixes.indexOf(target.charAt(0)) >= 0) {
             // The mode of a channel is being changed.
             String channel = target;
             StringTokenizer tok = new StringTokenizer(mode);
             String[] params = new String[tok.countTokens()];
-
+            
             int t = 0;
             while (tok.hasMoreTokens()) {
                 params[t] = tok.nextToken();
                 t++;
             }
-
+            
             char pn = ' ';
             int p = 1;
 
@@ -1477,7 +1486,7 @@ public abstract class PircBot implements ReplyConstants {
             // what the users want :-/
             for (int i = 0; i < params[0].length(); i++) {
                 char atPos = params[0].charAt(i);
-
+                
                 if (atPos == '+' || atPos == '-') {
                     pn = atPos;
                 } else if (atPos == 'o') {
@@ -1557,7 +1566,7 @@ public abstract class PircBot implements ReplyConstants {
                     }
                 }
             }
-
+            
             this.onMode(channel, sourceNick, sourceLogin, sourceHostname, mode);
         } else {
             // The mode of a user is being changed.
@@ -2601,7 +2610,7 @@ public abstract class PircBot implements ReplyConstants {
     public void setEncoding(String charset) throws UnsupportedEncodingException {
         // Just try to see if the charset is supported first...
         "".getBytes(charset);
-
+        
         _charset = charset;
     }
 
@@ -3015,7 +3024,7 @@ public abstract class PircBot implements ReplyConstants {
             _channels.clear();
         }
     }
-
+    
     protected void updateUserAFK(String channel, String username, boolean afk) {
         synchronized (_channels) {
             ArrayList<User> userlist = _channels.get(channel);
@@ -3030,7 +3039,7 @@ public abstract class PircBot implements ReplyConstants {
             }
         }
     }
-
+    
     protected void updateUserLastMessage(String channel, String username, String lastMessage) {
         synchronized (_channels) {
             ArrayList<User> userlist = _channels.get(channel);
@@ -3074,7 +3083,20 @@ public abstract class PircBot implements ReplyConstants {
             }
         }
     }
-
+    
+    private void updateUser(String username, String name) {
+        synchronized (_channels) {
+            for (String el : _channels.keySet()) {
+                ArrayList<User> userList = _channels.get(el);
+                for (User el2 : userList) {
+                    if (el2.getNick().equalsIgnoreCase(username)) {
+                        el2.changeName(name);
+                    }
+                }
+            }
+        }
+    }
+    
     private void updateUser(String channel, int userMode, String nick) {
         channel = channel.toLowerCase();
         synchronized (_channels) {
