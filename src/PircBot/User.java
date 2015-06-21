@@ -34,7 +34,7 @@ public class User {
     private boolean isOP;
     private boolean isVoice;
     private String _channel;
-    private static String[] bots = {"wow_deku_onehand", "lavasbot", "facts_bot", "totally_not_facts_bot", "23forces", "twitchplaysleaderboard", "recordingbot", "twitchnotify", "io_ol7bot"};
+    private static String[] bots = {"wow_deku_onehand", "lavasbot", "facts_bot", "totally_not_facts_bot", "23forces", "twitchplaysleaderboard", "recordingbot", "twitchnotify", "io_ol7bot", "tppstatbot", "tppstatsbot", "pikalaxbot"};
     private String previousMessage;
     private String color;
     private String emotes;
@@ -279,15 +279,19 @@ public class User {
     public void setVoice(boolean isVoice) {
         this.isVoice = isVoice;
     }
+
     /**
      * Gets the last message sent by this user
+     *
      * @return Last Message sent by the user
      */
     public String getPreviousMessage() {
         return previousMessage;
     }
+
     /**
      * Sets the last message sent by this user
+     *
      * @param previousMessage Message
      */
     public void setPreviousMessage(String previousMessage) {
@@ -333,8 +337,6 @@ public class User {
     public void setUserType(String userType) {
         this.userType = userType;
     }
-    
-    
 
     @Override
     public String toString() {

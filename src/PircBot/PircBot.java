@@ -3043,6 +3043,10 @@ public abstract class PircBot implements ReplyConstants {
                 _channels.put(channel, new ConcurrentHashMap<>());
                 return;
             }
+            User u = userlist.get(username.toLowerCase());
+            if(u == null){
+                return;
+            }
             userlist.get(username.toLowerCase()).setAFK(afk);
             _channels.replace(channel, userlist);
         }
@@ -3053,6 +3057,10 @@ public abstract class PircBot implements ReplyConstants {
             ConcurrentHashMap<String, User> userlist = _channels.get(channel);
             if (userlist == null) {
                 _channels.put(channel, new ConcurrentHashMap<>());
+                return;
+            }
+            User u = userlist.get(username.toLowerCase());
+            if(u == null){
                 return;
             }
             userlist.get(username.toLowerCase()).setPreviousMessage(lastMessage);
