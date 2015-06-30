@@ -869,7 +869,7 @@ public abstract class PircBot implements ReplyConstants {
         StringTokenizer tokenizer = new StringTokenizer(line);
         String senderInfo = tokenizer.nextToken();
         //twitch tags fix
-        if (senderInfo.startsWith("@color=#")) {
+        if (senderInfo.startsWith("@color=")) {
             containsIRC3 = true;
             senderInfo = tokenizer.nextToken();
             ircTags = line.split(" :", 2)[0];
@@ -937,7 +937,7 @@ public abstract class PircBot implements ReplyConstants {
             } catch (Exception ex) {
             }
 
-            String color = ircTags.split("\\;", 2)[0];
+            String color = ircTags.split("@color=", 2)[1].split("\\;", 2)[0];
             String emotes = "";
             try {
                 emotes = ircTags.split("\\;emotes=", 2)[1].split("\\;", 2)[0];
@@ -3044,7 +3044,7 @@ public abstract class PircBot implements ReplyConstants {
                 return;
             }
             User u = userlist.get(username.toLowerCase());
-            if(u == null){
+            if (u == null) {
                 return;
             }
             userlist.get(username.toLowerCase()).setAFK(afk);
@@ -3060,7 +3060,7 @@ public abstract class PircBot implements ReplyConstants {
                 return;
             }
             User u = userlist.get(username.toLowerCase());
-            if(u == null){
+            if (u == null) {
                 return;
             }
             userlist.get(username.toLowerCase()).setPreviousMessage(lastMessage);

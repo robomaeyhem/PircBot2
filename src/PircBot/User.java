@@ -364,10 +364,7 @@ public class User {
         if (this.isAFK != other.isAFK) {
             return false;
         }
-        if (!Objects.equals(this._channel, other._channel)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this._channel, other._channel);
     }
 
     /**
