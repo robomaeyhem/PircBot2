@@ -2481,15 +2481,23 @@ public abstract class PircBot implements ReplyConstants {
 
     /**
      * Gets the maximum length of any line that is sent via the IRC protocol.
-     * The IRC RFC specifies that line lengths, including the trailing \r\n must
-     * not exceed 512 bytes. Hence, there is currently no option to change this
-     * value in PircBot. All lines greater than this length will be truncated
-     * before being sent to the IRC server.
      *
-     * @return The maximum line length (currently fixed at 512)
+     * @return The maximum line length (512 default)
      */
     public final int getMaxLineLength() {
         return InputThread.MAX_LINE_LENGTH;
+    }
+
+    /**
+     * Set the maximum length of any line that is sent via the IRC protocol.
+     * The IRC RFC specifies that line lengths, including the trailing \r\n must
+     * not exceed 512 bytes. All lines greater than this length will be truncated
+     * before being sent to the IRC server.
+     *
+     * @param length New max line length
+     */
+    public final void setMaxLineLength(int length) {
+        InputThread.MAX_LINE_LENGTH = length;
     }
 
     /**
