@@ -968,9 +968,9 @@ public abstract class PircBot implements ReplyConstants {
                 this.onVersion(sourceNick, sourceLogin, sourceHostname, target);
             } else if (request.startsWith("ACTION ")) {
                 // ACTION request
-                this.onAction(sourceNick, sourceLogin, sourceHostname, target, request.substring(7));
                 this.updateUserLastMessage(target, sourceNick, request.substring(7));
-                this.updateUserAFK(target, sourceNick, false);
+                this.updateUserAFK(target, sourceNick, false);                
+                this.onAction(sourceNick, sourceLogin, sourceHostname, target, request.substring(7));
             } else if (request.startsWith("PING ")) {
                 // PING request
                 this.onPing(sourceNick, sourceLogin, sourceHostname, target, request.substring(5));
@@ -993,9 +993,9 @@ public abstract class PircBot implements ReplyConstants {
             }
         } else if (command.equals("PRIVMSG") && _channelPrefixes.indexOf(target.charAt(0)) >= 0) {
             // This is a normal message to a channel.
-            this.onMessage(target, sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
             this.updateUserLastMessage(target, sourceNick, line.substring(line.indexOf(" :") + 2));
-            this.updateUserAFK(target, sourceNick, false);
+            this.updateUserAFK(target, sourceNick, false);            
+            this.onMessage(target, sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
         } else if (command.equals("PRIVMSG")) {
             // This is a private message to us.
             this.onPrivateMessage(sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
