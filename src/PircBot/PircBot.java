@@ -956,7 +956,7 @@ public abstract class PircBot implements ReplyConstants {
             boolean turbo = (turboBuffer == 1);
             String userType = ircTags.split("\\;user-type=", 2)[1].split("\\;", 2)[0];
             updateUser(sourceNick, color, emotes, subscriber, turbo, userType);
-            if (!name.isEmpty() && name.equals("")) {
+            if (!name.isEmpty() && !name.equals("")) {
                 renameUser(sourceNick, name);
             }
         }
