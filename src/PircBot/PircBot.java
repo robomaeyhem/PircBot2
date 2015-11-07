@@ -936,7 +936,9 @@ public abstract class PircBot implements ReplyConstants {
                 name = ircTags.split("\\;display-name=", 2)[1].split("\\;", 2)[0];
             } catch (Exception ex) {
             }
-
+            if (!name.isEmpty()) {
+                sourceNick = name;
+            }
             String color = ircTags.split("@color=", 2)[1].split("\\;", 2)[0];
             String emotes = "";
             try {
@@ -956,9 +958,6 @@ public abstract class PircBot implements ReplyConstants {
             boolean turbo = (turboBuffer == 1);
             String userType = ircTags.split("\\;user-type=", 2)[1].split("\\;", 2)[0];
             updateUser(sourceNick, color, emotes, subscriber, turbo, userType);
-            if (!name.isEmpty() && !name.equals("")) {
-                renameUser(sourceNick, name);
-            }
         }
         // Check for CTCP requests.
         if (command.equals("PRIVMSG") && line.indexOf(":\u0001") > 0 && line.endsWith("\u0001")) {
@@ -969,7 +968,7 @@ public abstract class PircBot implements ReplyConstants {
             } else if (request.startsWith("ACTION ")) {
                 // ACTION request
                 this.updateUserLastMessage(target, sourceNick, request.substring(7));
-                this.updateUserAFK(target, sourceNick, false);                
+                this.updateUserAFK(target, sourceNick, false);
                 this.onAction(sourceNick, sourceLogin, sourceHostname, target, request.substring(7));
             } else if (request.startsWith("PING ")) {
                 // PING request
@@ -994,7 +993,7 @@ public abstract class PircBot implements ReplyConstants {
         } else if (command.equals("PRIVMSG") && _channelPrefixes.indexOf(target.charAt(0)) >= 0) {
             // This is a normal message to a channel.
             this.updateUserLastMessage(target, sourceNick, line.substring(line.indexOf(" :") + 2));
-            this.updateUserAFK(target, sourceNick, false);            
+            this.updateUserAFK(target, sourceNick, false);
             this.onMessage(target, sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
         } else if (command.equals("PRIVMSG")) {
             // This is a private message to us.
@@ -2489,9 +2488,9 @@ public abstract class PircBot implements ReplyConstants {
     }
 
     /**
-     * Set the maximum length of any line that is sent via the IRC protocol.
-     * The IRC RFC specifies that line lengths, including the trailing \r\n must
-     * not exceed 512 bytes. All lines greater than this length will be truncated
+     * Set the maximum length of any line that is sent via the IRC protocol. The
+     * IRC RFC specifies that line lengths, including the trailing \r\n must not
+     * exceed 512 bytes. All lines greater than this length will be truncated
      * before being sent to the IRC server.
      *
      * @param length New max line length
@@ -2893,7 +2892,6 @@ public abstract class PircBot implements ReplyConstants {
      * @return An array of User objects. This array is empty if we are not in
      * the channel.
      *
-     * @see #onUserList(String,User[]) onUserList
      */
     public final ArrayList<User> getUsers(String channel) {
         channel = channel.toLowerCase();
