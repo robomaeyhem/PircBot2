@@ -859,7 +859,7 @@ public abstract class PircBot implements ReplyConstants {
             this.onServerPing(line.substring(5));
             return;
         }
-
+        HashMap<String, String> tags = new HashMap<>();
         String sourceNick = "";
         String sourceLogin = "";
         String sourceHostname = "";
@@ -869,10 +869,10 @@ public abstract class PircBot implements ReplyConstants {
         StringTokenizer tokenizer = new StringTokenizer(line);
         String senderInfo = tokenizer.nextToken();
         //twitch tags fix
-        if (senderInfo.startsWith("@color=")) {
+        if (senderInfo.startsWith("@")) {
             containsIRC3 = true;
             senderInfo = tokenizer.nextToken();
-            ircTags = line.split(" :", 2)[0];
+            ircTags = line.split(" :", 2)[0].substring(1);
             line = line.split(" :", 2)[1];
         }
         String command = tokenizer.nextToken();
@@ -912,7 +912,7 @@ public abstract class PircBot implements ReplyConstants {
                     }
                 } else {
                     // We don't know what this line means.
-                    this.onUnknown(line);
+                    this.onUnknown(line, tags);
                     // Return from the method;
                     return;
                 }
@@ -931,33 +931,32 @@ public abstract class PircBot implements ReplyConstants {
             target = target.substring(1);
         }
         if (containsIRC3) {
-            String name = "";
-            try {
-                name = ircTags.split("\\;display-name=", 2)[1].split("\\;", 2)[0];
+            //color=#FF7FFF;display-name=frumpy4;emotes=25:0-4,6-10;subscriber=0;turbo=0;user-id=28295078;user-type=
+            for (String tag: ircTags.split(";")) {
+                String[] kv = tag.split("=");
+                String key = kv[0];
+                String value;
+                if (kv.length == 1) {
+                    value = "";
+                } else {
+                    value = kv[1];
+                }
+                tags.put(key, value);
+            }
+            if (tags.containsKey("display-name")) {
+                sourceNick = tags.get("display-name");
+            }
+            try { //update user info
+                //normal privmsg (including actions and whispers)
+                String color = tags.get("color");
+                boolean subscriber = tags.get("subscriber").equals("1");
+                boolean turbo = tags.get("turbo").equals("1");
+                String userType = tags.get("user-type");
+                long id = Long.parseLong(tags.get("user-id"));
+                updateUser(sourceNick, color, subscriber, turbo, userType, id);
             } catch (Exception ex) {
+                //this isn't a normal command, probably something like ROOMSTATE from twitch.
             }
-            if (!name.isEmpty()) {
-                sourceNick = name;
-            }
-            String color = ircTags.split("@color=", 2)[1].split("\\;", 2)[0];
-            String emotes = "";
-            try {
-                emotes = ircTags.split("\\;emotes=", 2)[1].split("\\;", 2)[0];
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                emotes = ircTags.split("\\;emote-sets=", 2)[1].split("\\;", 2)[0];
-            }
-            int subBuffer = 0;
-            try {
-                subBuffer = Integer.parseInt(ircTags.split("\\;subscriber=", 2)[1].split("\\;", 2)[0]);
-            } catch (Exception ex) {
-                subBuffer = 0;
-            }
-
-            boolean subscriber = (subBuffer == 1);
-            int turboBuffer = Integer.parseInt(ircTags.split("\\;turbo=", 2)[1].split("\\;", 2)[0]);
-            boolean turbo = (turboBuffer == 1);
-            String userType = ircTags.split("\\;user-type=", 2)[1].split("\\;", 2)[0];
-            updateUser(sourceNick, color, emotes, subscriber, turbo, userType);
         }
         // Check for CTCP requests.
         if (command.equals("PRIVMSG") && line.indexOf(":\u0001") > 0 && line.endsWith("\u0001")) {
@@ -969,7 +968,7 @@ public abstract class PircBot implements ReplyConstants {
                 // ACTION request
                 this.updateUserLastMessage(target, sourceNick, request.substring(7));
                 this.updateUserAFK(target, sourceNick, false);
-                this.onAction(sourceNick, sourceLogin, sourceHostname, target, request.substring(7));
+                this.onAction(sourceNick, sourceLogin, sourceHostname, target, request.substring(7), tags);
             } else if (request.startsWith("PING ")) {
                 // PING request
                 this.onPing(sourceNick, sourceLogin, sourceHostname, target, request.substring(5));
@@ -984,23 +983,23 @@ public abstract class PircBot implements ReplyConstants {
                 boolean success = _dccManager.processRequest(sourceNick, sourceLogin, sourceHostname, request);
                 if (!success) {
                     // The DccManager didn't know what to do with the line.
-                    this.onUnknown(line);
+                    this.onUnknown(line, tags);
                 }
             } else {
                 // An unknown CTCP message - ignore it.
-                this.onUnknown(line);
+                this.onUnknown(line, tags);
             }
         } else if (command.equals("PRIVMSG") && _channelPrefixes.indexOf(target.charAt(0)) >= 0) {
             // This is a normal message to a channel.
             this.updateUserLastMessage(target, sourceNick, line.substring(line.indexOf(" :") + 2));
             this.updateUserAFK(target, sourceNick, false);
-            this.onMessage(target, sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
+            this.onMessage(target, sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2), tags);
         } else if (command.equals("PRIVMSG")) {
             // This is a private message to us.
             this.onPrivateMessage(sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
         } else if (command.equals("WHISPER")) {
             // Whisper to us.
-            this.onWhisper(sourceHostname, sourceNick, line.split("WHISPER ", 2)[1].split(" :", 2)[0], line.split(" :", 2)[1]);
+            this.onWhisper(sourceHostname, sourceNick, line.split("WHISPER ", 2)[1].split(" :", 2)[0], line.split(" :", 2)[1], tags);
         } else if (command.equals("JOIN")) {
             // Someone is joining a channel.
             String channel = target;
@@ -1057,7 +1056,7 @@ public abstract class PircBot implements ReplyConstants {
         } else {
             // If we reach this point, then we've found something that the PircBot
             // Doesn't currently deal with.
-            this.onUnknown(line);
+            this.onUnknown(line, tags);
         }
 
     }
@@ -1256,7 +1255,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param hostname The hostname of the person who sent the message.
      * @param message The actual message sent to the channel.
      */
-    protected void onMessage(String channel, String sender, String login, String hostname, String message) {
+    protected void onMessage(String channel, String sender, String login, String hostname, String message, HashMap<String, String> tags) {
     }
 
     /**
@@ -1286,7 +1285,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param target The target of the action, be it a channel or our nick.
      * @param action The action carried out by the user.
      */
-    protected void onAction(String sender, String login, String hostname, String target, String action) {
+    protected void onAction(String sender, String login, String hostname, String target, String action, HashMap<String, String> tags) {
     }
 
     /**
@@ -1446,7 +1445,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param target Who the Whisper is for
      * @param message Whisper Message
      */
-    protected void onWhisper(String hostname, String sender, String target, String message) {
+    protected void onWhisper(String hostname, String sender, String target, String message, HashMap<String, String> tags) {
 
     }
 
@@ -2301,7 +2300,7 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param line The raw line that was received from the server.
      */
-    protected void onUnknown(String line) {
+    protected void onUnknown(String line, HashMap<String, String> tags) {
         // And then there were none :)
     }
 
@@ -3081,12 +3080,11 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param username Username to look for
      * @param color User color info
-     * @param emotes User emote tag info
      * @param subscriber User subscriber
      * @param turbo User turbo
      * @param userType Usertype
      */
-    private void updateUser(String username, String color, String emotes, boolean subscriber, boolean turbo, String userType) {
+    private void updateUser(String username, String color, boolean subscriber, boolean turbo, String userType, long id) {
         synchronized (_channels) {
             ConcurrentHashMap<String, ConcurrentHashMap<String, User>> otherChannel = new ConcurrentHashMap<>();
             for (String el : _channels.keySet()) {
@@ -3096,10 +3094,10 @@ public abstract class PircBot implements ReplyConstants {
                     User user = userList.get(el2);
                     if (user.getNick().equalsIgnoreCase(username)) {
                         user.setColor(color);
-                        user.setEmotes(emotes);
                         user.setSubscriber(subscriber);
                         user.setTurbo(turbo);
                         user.setUserType(userType);
+                        user.setId(id);
                     }
                     otherUserlist.put(el2, user);
                 }
