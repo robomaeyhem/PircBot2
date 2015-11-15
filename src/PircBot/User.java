@@ -37,10 +37,10 @@ public class User {
     private static String[] bots = {"wow_deku_onehand", "lavasbot", "facts_bot", "totally_not_facts_bot", "23forces", "twitchplaysleaderboard", "recordingbot", "twitchnotify", "io_ol7bot", "tppstatbot", "tppstatsbot", "pikalaxbot", "wowitsbot", "wallbot303", "frunky5", "wow_statsbot_onehand", "tppbankbot", "tppmodbot", "tppinfobot", "kmsbot", "trainertimmybot", "wow_battlebot_onehand"};
     private String previousMessage;
     private String color;
-    private String emotes;
     private boolean subscriber;
     private boolean turbo;
     private String userType;
+    private long id;
 
     public static boolean isBot(String username) {
         username = username.toLowerCase();
@@ -59,18 +59,18 @@ public class User {
      * @param channel Channel user is in
      */
     public User(String name, String channel) {
-        _nick = name;
-        _channel = channel;
+        this._nick = name;
+        this._channel = channel;
         this.lastMessage = System.currentTimeMillis();
         this.isAFK = false;
         this.isOP = false;
         this.isVoice = false;
-        previousMessage = "";
-        color = "";
-        emotes = "";
-        subscriber = false;
-        turbo = false;
-        userType = "";
+        this.previousMessage = "";
+        this.color = "";
+        this.subscriber = false;
+        this.turbo = false;
+        this.userType = "";
+        this.id = 0;
     }
 
     /**
@@ -81,18 +81,18 @@ public class User {
      * @param lastMessage Last Message received time
      */
     public User(String name, String channel, long lastMessage) {
-        _nick = name;
-        _channel = channel;
+        this._nick = name;
+        this._channel = channel;
         this.lastMessage = lastMessage;
         this.isAFK = false;
         this.isOP = false;
         this.isVoice = false;
-        previousMessage = "";
-        color = "";
-        emotes = "";
-        subscriber = false;
-        turbo = false;
-        userType = "";
+        this.previousMessage = "";
+        this.color = "";
+        this.subscriber = false;
+        this.turbo = false;
+        this.userType = "";
+        this.id = 0;
     }
 
     /**
@@ -104,18 +104,18 @@ public class User {
      * @param afk Is user AFK?
      */
     public User(String name, String channel, long lastMessage, boolean afk) {
-        _nick = name;
-        _channel = channel;
+        this._nick = name;
+        this._channel = channel;
         this.lastMessage = System.currentTimeMillis();
         this.isAFK = afk;
         this.isOP = false;
         this.isVoice = false;
-        previousMessage = "";
-        color = "";
-        emotes = "";
-        subscriber = false;
-        turbo = false;
-        userType = "";
+        this.previousMessage = "";
+        this.color = "";
+        this.subscriber = false;
+        this.turbo = false;
+        this.userType = "";
+        this.id = 0;
     }
 
     /**
@@ -135,12 +135,41 @@ public class User {
         this.isOP = isOP;
         this.isVoice = isVoice;
         this._channel = _channel;
-        previousMessage = "";
-        color = "";
-        emotes = "";
-        subscriber = false;
-        turbo = false;
-        userType = "";
+        this.previousMessage = "";
+        this.color = "";
+        this.subscriber = false;
+        this.turbo = false;
+        this.userType = "";
+        this.id = 0;
+    }
+
+    /**
+     * Constructs a new user object
+     *
+     * @param _nick Name of the user
+     * @param _channel Channel user is in
+     * @param lastMessage Last Message received time
+     * @param isAFK Is user AFK?
+     * @param isOP Is user OP?
+     * @param isVoice Is user voiced?
+     * @param color Color String of the User
+     * @param isSubscriber Is user a Channel Sub?
+     * @param isTurbo Is user a Turbo user?
+     * @param userType User Type tag info
+     */
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean isSubscriber, boolean isTurbo, String userType) {
+        this._nick = _nick;
+        this.lastMessage = lastMessage;
+        this.isAFK = isAFK;
+        this.isOP = isOP;
+        this.isVoice = isVoice;
+        this._channel = _channel;
+        this.previousMessage = "";
+        this.color = color;
+        this.subscriber = isSubscriber;
+        this.turbo = isTurbo;
+        this.userType = userType;
+        this.id = 0;
     }
 
     /**
@@ -156,12 +185,12 @@ public class User {
         this.isAFK = user.isAFK;
         this.isOP = user.isOP;
         this.isVoice = user.isVoice;
-        previousMessage = "";
-        color = "";
-        emotes = "";
-        subscriber = false;
-        turbo = false;
-        userType = "";
+        this.previousMessage = "";
+        this.color = "";
+        this.subscriber = false;
+        this.turbo = false;
+        this.userType = "";
+        this.id = 0;
     }
 
     /**
@@ -298,20 +327,28 @@ public class User {
         this.previousMessage = previousMessage;
     }
 
+    /**
+     * Get the twitch user-id tag for this user (if tags are enabled)
+     *
+     * @return user-id
+     */
+    public long getId() {
+        return this.id;
+    }
+
+    /**
+     * Set the twitch user-id for this user
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getColor() {
         return color;
     }
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public String getEmotes() {
-        return emotes;
-    }
-
-    public void setEmotes(String emotes) {
-        this.emotes = emotes;
     }
 
     public boolean isSubscriber() {
