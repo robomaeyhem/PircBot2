@@ -1004,14 +1004,14 @@ public abstract class PircBot implements ReplyConstants {
             // Someone is joining a channel.
             String channel = target;
             this.addUser(channel, new User(sourceNick, channel));
-            this.onJoin(channel, user, sourceLogin, sourceHostname);
+            this.onJoin(channel, user);
         } else if (command.equals("PART")) {
             // Someone is parting from a channel.
             this.removeUser(target, sourceNick);
             if (sourceNick.equals(this.getNick())) {
                 this.removeChannel(target);
             }
-            this.onPart(target, user, sourceLogin, sourceHostname);
+            this.onPart(target, user);
         } else if (command.equals("NICK")) {
             // Somebody is changing their nick.
             String newNick = target;
@@ -1304,10 +1304,8 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param channel The channel which somebody joined.
      * @param sender The nick of the user who joined the channel.
-     * @param login The login of the user who joined the channel.
-     * @param hostname The hostname of the user who joined the channel.
      */
-    protected void onJoin(String channel, User sender, String login, String hostname) {
+    protected void onJoin(String channel, User sender) {
     }
 
     /**
@@ -1319,10 +1317,8 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param channel The channel which somebody parted from.
      * @param sender The nick of the user who parted from the channel.
-     * @param login The login of the user who parted from the channel.
-     * @param hostname The hostname of the user who parted from the channel.
      */
-    protected void onPart(String channel, User sender, String login, String hostname) {
+    protected void onPart(String channel, User sender) {
     }
 
     /**
