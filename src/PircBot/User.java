@@ -144,6 +144,35 @@ public class User {
     }
 
     /**
+     * Constructs a new user object
+     *
+     * @param _nick Name of the user
+     * @param _channel Channel user is in
+     * @param lastMessage Last Message received time
+     * @param isAFK Is user AFK?
+     * @param isOP Is user OP?
+     * @param isVoice Is user voiced?
+     * @param color Color String of the User
+     * @param isSubscriber Is user a Channel Sub?
+     * @param isTurbo Is user a Turbo user?
+     * @param userType User Type tag info
+     */
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean isSubscriber, boolean isTurbo, String userType) {
+        this._nick = _nick;
+        this.lastMessage = lastMessage;
+        this.isAFK = isAFK;
+        this.isOP = isOP;
+        this.isVoice = isVoice;
+        this._channel = _channel;
+        this.previousMessage = "";
+        this.color = color;
+        this.subscriber = isSubscriber;
+        this.turbo = isTurbo;
+        this.userType = userType;
+        this.id = 0;
+    }
+
+    /**
      * Constructs a new user object from an existing user object.
      *
      * @param user User object to use
