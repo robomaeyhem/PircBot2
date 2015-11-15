@@ -869,10 +869,10 @@ public abstract class PircBot implements ReplyConstants {
         StringTokenizer tokenizer = new StringTokenizer(line);
         String senderInfo = tokenizer.nextToken();
         //twitch tags fix
-        if (senderInfo.startsWith("@color=")) {
+        if (senderInfo.startsWith("@")) {
             containsIRC3 = true;
             senderInfo = tokenizer.nextToken();
-            ircTags = line.split(" :", 2)[0];
+            ircTags = line.split(" :", 2)[0].substring(1);
             line = line.split(" :", 2)[1];
         }
         String command = tokenizer.nextToken();
@@ -930,33 +930,37 @@ public abstract class PircBot implements ReplyConstants {
             target = target.substring(1);
         }
         User user = new User(sourceNick, target, System.currentTimeMillis());
+        HashMap<String, String> tags = new HashMap<>();
         if (containsIRC3) {
-            String name = "";
+            for (String tag: ircTags.split(";")) {
+                String[] kv = tag.split("=");
+                String key = kv[0];
+                String value;
+                if (kv.length == 1) {
+                    value = "";
+                } else {
+                    value = kv[1];
+                }
+                tags.put(key, value);
+                if (key.equalsIgnoreCase("display-name")) {
+                    user.changeName(value);
+                } else if (key.equalsIgnoreCase("color")) {
+                    user.setColor(value);
+                } else if (key.equalsIgnoreCase("subscriber")) {
+                    user.setSubscriber(value.equals("1"));
+                } else if (key.equalsIgnoreCase("turbo")) {
+                    user.setTurbo(value.equals("1"));
+                } else if (key.equalsIgnoreCase("user-type")) {
+                    user.setUserType(value);
+                } else if (key.equalsIgnoreCase("user-id")) {
+                    user.setId(Long.parseLong(value));
+                }
+            }
             try {
-                name = ircTags.split("\\;display-name=", 2)[1].split("\\;", 2)[0];
+                updateUser(tags.get("display-name"), tags.get("color"), tags.get("subscriber").equals("1"), tags.get("turbo").equals("1"), tags.get("user-type"), Long.parseLong(tags.get("user-id")));
             } catch (Exception ex) {
-            }
-            if (!name.isEmpty()) {
-                sourceNick = name;
-            }
-            String color = ircTags.split("@color=", 2)[1].split("\\;", 2)[0];            
-            int subBuffer = 0;
-            try {
-                subBuffer = Integer.parseInt(ircTags.split("\\;subscriber=", 2)[1].split("\\;", 2)[0]);
-            } catch (Exception ex) {
-                subBuffer = 0;
-            }
 
-            boolean subscriber = (subBuffer == 1);
-            int turboBuffer = Integer.parseInt(ircTags.split("\\;turbo=", 2)[1].split("\\;", 2)[0]);
-            boolean turbo = (turboBuffer == 1);
-            String userType = ircTags.split("\\;user-type=", 2)[1].split("\\;", 2)[0];
-            updateUser(sourceNick, color, subscriber, turbo, userType);
-            user.changeName(sourceNick);
-            user.setColor(color);
-            user.setSubscriber(subscriber);
-            user.setTurbo(turbo);
-            user.setUserType(userType);
+            }
         }
         // Check for CTCP requests.        
         if (command.equals("PRIVMSG") && line.indexOf(":\u0001") > 0 && line.endsWith("\u0001")) {
@@ -1346,7 +1350,6 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param channel The channel from which the recipient was kicked.
      * @param kicker The user who performed the kick.
-     * @param recipient The unfortunate recipient of the kick.
      * @param reason The reason given by the user who performed the kick.
      */
     protected void onKick(String channel, User kicker, String reciepient, String reason) {
@@ -2240,7 +2243,6 @@ public abstract class PircBot implements ReplyConstants {
      * method, be sure to either mimic its functionality or to call
      * super.onTime(...);
      *
-     * @param user The nick of the user that sent the TIME request.     
      * @param target The target of the TIME request, be it our nick or a channel
      * name.
      */
@@ -3052,12 +3054,11 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param username Username to look for
      * @param color User color info
-     * @param emotes User emote tag info
      * @param subscriber User subscriber
      * @param turbo User turbo
      * @param userType Usertype
      */
-    private void updateUser(String username, String color, boolean subscriber, boolean turbo, String userType) {
+    private void updateUser(String username, String color, boolean subscriber, boolean turbo, String userType, long id) {
         synchronized (_channels) {
             ConcurrentHashMap<String, ConcurrentHashMap<String, User>> otherChannel = new ConcurrentHashMap<>();
             for (String el : _channels.keySet()) {
@@ -3070,6 +3071,7 @@ public abstract class PircBot implements ReplyConstants {
                         user.setSubscriber(subscriber);
                         user.setTurbo(turbo);
                         user.setUserType(userType);
+                        user.setId(id);
                     }
                     otherUserlist.put(el2, user);                    
                 }
