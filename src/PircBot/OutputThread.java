@@ -77,7 +77,7 @@ public class OutputThread extends Thread {
             while (running) {
                 // Small delay to prevent spamming of the channel
                 Thread.sleep(_bot.getMessageDelay());
-                String line = (String) _outQueue.next();
+                String line = _outQueue.next();
                 if (line != null) {
                     _bot.sendRawLine(line);
                 } else {
@@ -88,7 +88,14 @@ public class OutputThread extends Thread {
             // Just let the method return naturally...
         }
     }
-
+    /**
+     * Checks if the queue contains a specified string.
+     * @param input Command to check for
+     * @return True if found, false if not found or null.
+     */
+    public boolean checkQueue(String input) {
+        return _outQueue.contains(input);
+    }
     private PircBot _bot = null;
     private Queue _outQueue = null;
 

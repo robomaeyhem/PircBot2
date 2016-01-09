@@ -12,6 +12,8 @@
  */
 package PircBot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -32,14 +34,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class Queue {
 
-    private final ConcurrentLinkedQueue _queue;
+    private final ConcurrentLinkedQueue<String> _queue;
     private int size;
 
     /**
      * Constructs a Queue object of unlimited size.
      */
     public Queue() {
-        _queue = new ConcurrentLinkedQueue();
+        _queue = new ConcurrentLinkedQueue<>();
         size = Integer.MAX_VALUE;
     }
 
@@ -72,14 +74,27 @@ public class Queue {
         }
     }
 
+
+    public ArrayList<String> toArray() {
+        Object[] arr = _queue.toArray();
+        String[] arrOther = new String[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] instanceof String) {
+                String t = (String) arr[i];
+                arrOther[i] = t;
+            }
+        }
+        return new ArrayList<>(Arrays.asList(arrOther));
+    }
+
     /**
      * Adds an Object to the end of the Queue.
      *
      * @param o The Object to be added to the Queue.
      */
-    public void add(Object o) {
+    public void add(String o) {
         synchronized (_queue) {
-            if (o.toString().startsWith("PRIVMSG")) {
+            if (o.startsWith("PRIVMSG")) {
                 if (messageCount() >= this.size) {
                     _queue.notify();
                     return;
@@ -90,7 +105,7 @@ public class Queue {
 
         }
     }
-    
+
     public int messageCount() {
         int count = 0;
         synchronized (_queue) {
@@ -111,9 +126,9 @@ public class Queue {
      *
      * @return The next item from the front of the queue.
      */
-    public Object next() {
+    public String next() {
 
-        Object o = null;
+        String o = null;
 
         // Block if the Queue is empty.
         synchronized (_queue) {

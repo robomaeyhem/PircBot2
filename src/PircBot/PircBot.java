@@ -262,6 +262,22 @@ public abstract class PircBot implements ReplyConstants {
     }
 
     /**
+     * Checks the output queue for a specified command. This method does not
+     * automatically append IRC Commands, so if you want to search for a
+     * specific message, make sure the input contains "PRIVMSG " and then the
+     * channel name.
+     *
+     * @param input String to search for
+     * @return True if found, false otherwise.
+     */
+    public synchronized final boolean checkQueue(String input) {
+        if (_outputThread == null) {
+            return false;
+        }
+        return _outputThread.checkQueue(input);
+    }
+
+    /**
      * Reconnects to the IRC server that we were previously connected to. If
      * necessary, the appropriate port number and password will be used. This
      * method will throw an IrcException if we have never connected to an IRC
@@ -932,7 +948,7 @@ public abstract class PircBot implements ReplyConstants {
         User user = new User(sourceNick, target, System.currentTimeMillis());
         HashMap<String, String> tags = new HashMap<>();
         if (containsIRC3) {
-            for (String tag: ircTags.split(";")) {
+            for (String tag : ircTags.split(";")) {
                 String[] kv = tag.split("=");
                 String key = kv[0];
                 String value;
@@ -1024,7 +1040,7 @@ public abstract class PircBot implements ReplyConstants {
                 // Update our nick if it was us that changed nick.
                 this.setNick(newNick);
             }
-            this.onNickChange(sourceNick, sourceLogin, sourceHostname, newNick,user);
+            this.onNickChange(sourceNick, sourceLogin, sourceHostname, newNick, user);
         } else if (command.equals("NOTICE")) {
             // Someone is sending a notice.
             this.onNotice(user, target, line.substring(line.indexOf(" :") + 2));
@@ -2213,7 +2229,7 @@ public abstract class PircBot implements ReplyConstants {
      * method, be sure to either mimic its functionality or to call
      * super.onPing(...);
      *
-     * @param sender The nick of the user that sent the PING request.     
+     * @param sender The nick of the user that sent the PING request.
      * @param target The target of the PING request, be it our nick or a channel
      * name.
      * @param pingValue The value that was supplied as an argument to the PING
@@ -3073,7 +3089,7 @@ public abstract class PircBot implements ReplyConstants {
                         user.setUserType(userType);
                         user.setId(id);
                     }
-                    otherUserlist.put(el2, user);                    
+                    otherUserlist.put(el2, user);
                 }
                 otherChannel.put(el, otherUserlist);
             }
