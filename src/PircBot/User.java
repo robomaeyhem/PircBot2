@@ -26,7 +26,7 @@ import java.util.Objects;
  * <a href="http://www.jibble.org/">http://www.jibble.org/</a>
  * @version 1.5.0 (Build time: Mon Dec 14 20:07:17 2009)
  */
-public class User {
+public class User implements Comparable {
 
     private String _nick;
     private long lastMessage;
@@ -71,6 +71,16 @@ public class User {
         this.turbo = false;
         this.userType = "";
         this.id = 0;
+    }
+
+    /**
+     * Constructs a new user object
+     *
+     * @param name Name of the user
+     * @param channel Channel user is in
+     */
+    public User(String name, Channel channel) {
+        this(name, channel.getChannelName());
     }
 
     /**
