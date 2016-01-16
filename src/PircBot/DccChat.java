@@ -34,11 +34,9 @@ public class DccChat {
      * request.
      * 
      * @param bot An instance of the underlying PircBot.
-     * @param sourceNick The nick of the sender.
+     * @param nick The nick of the sender.
      * @param address The address to connect to.
      * @param port The port number to connect to.
-     * 
-     * @throws IOException If the connection cannot be made.
      */
     DccChat(PircBot bot, String nick, String login, String hostname, long address, int port) {
         _bot = bot;
@@ -57,7 +55,7 @@ public class DccChat {
      * obtain is passed to this constructor.
      * 
      * @param bot An instance of the underlying PircBot.
-     * @param sourceNick The nick of the user we are sending the request to.
+     * @param nick The nick of the user we are sending the request to.
      * @param socket The socket which will be used for the DCC CHAT session.
      * 
      * @throws IOException If the socket cannot be read from.
