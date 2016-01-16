@@ -424,7 +424,7 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param line The raw line to send to the IRC server.
      */
-    public final synchronized void sendRawLine(String line) {
+    public synchronized void sendRawLine(String line) {
         if (isConnected()) {
             _inputThread.sendRawLine(line);
         }
