@@ -1144,12 +1144,14 @@ public abstract class PircBot implements ReplyConstants {
             this.onInvite(target, sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
         } else if (command.equals("CLEARCHAT")) {
             String[] l = line.substring(line.indexOf("#")).split(" ");
+            Channel ch = this._channels.get(l[0]);
             if (l.length == 1) { // Chat was cleared
-                this.onChatCleared(channel);
+                this.onChatCleared(ch);
             } else { // User was timed out
-                User u;
-                if ((u = channel.getUser(l[1].substring(1))) != null) {
-                    this.onUserTimedOut(u, channel);
+                try {
+                    this.onUserTimedOut(ch.getUser(l[1].substring(1)), ch);
+                } catch (NullPointerException npe) {
+
                 }
             }
         } else {
