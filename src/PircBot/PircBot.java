@@ -62,7 +62,7 @@ public abstract class PircBot implements ReplyConstants {
      * The definitive version number of this release of PircBot. (Note: Change
      * this before automatically building releases)
      */
-    public static final String VERSION = "1.5.2";
+    public static final String VERSION = "1.5.3";
 
     private static final int OP_ADD = 1;
     private static final int OP_REMOVE = 2;
@@ -708,8 +708,6 @@ public abstract class PircBot implements ReplyConstants {
      * PircBot receives information for each channel, it will call the
      * onChannelInfo method, which you will need to override if you want it to
      * do anything useful.
-     *
-     * @see #onChannelInfo(String,int,String) onChannelInfo
      */
     public final void listChannels() {
         this.listChannels(null);
@@ -727,8 +725,6 @@ public abstract class PircBot implements ReplyConstants {
      * supported or not will depend on the IRC server software.
      *
      * @param parameters The parameters to supply when requesting the list.
-     *
-     * @see #onChannelInfo(String,int,String) onChannelInfo
      */
     public final void listChannels(String parameters) {
         if (parameters == null) {
@@ -1039,12 +1035,14 @@ public abstract class PircBot implements ReplyConstants {
                         sub = tags.get("subscriber").equals("1");
                     } catch (Exception ex) {
                         sub = false;
-                }   boolean turbo = false;
+                    }
+                    boolean turbo = false;
                     try {
-                    turbo = tags.get("turbo").equals("1");
-                } catch (Exception ex) {
-                    turbo = false;
-                }   updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, tags.get("user-type"), userID);
+                        turbo = tags.get("turbo").equals("1");
+                    } catch (Exception ex) {
+                        turbo = false;
+                    }
+                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, tags.get("user-type"), userID);
                     break;
             }
         }
@@ -1144,6 +1142,16 @@ public abstract class PircBot implements ReplyConstants {
         } else if (command.equals("INVITE")) {
             // Somebody is inviting somebody else into a channel.
             this.onInvite(target, sourceNick, sourceLogin, sourceHostname, line.substring(line.indexOf(" :") + 2));
+        } else if (command.equals("CLEARCHAT")) {
+            String[] l = line.substring(line.indexOf("#")).split(" ");
+            if (l.length == 1) { // Chat was cleared
+                this.onChatCleared(channel);
+            } else { // User was timed out
+                User u;
+                if ((u = channel.getUser(l[1].substring(1))) != null) {
+                    this.onUserTimedOut(u, channel);
+                }
+            }
         } else {
             // If we reach this point, then we've found something that the PircBot
             // Doesn't currently deal with.
@@ -2334,6 +2342,29 @@ public abstract class PircBot implements ReplyConstants {
      */
     protected void onFinger(User sender, String target) {
         this.sendRawLine("NOTICE " + sender.getNick() + " :\u0001FINGER " + _finger + "\u0001");
+    }
+
+    /**
+     * This method is called whenever a user is timed out in a channel.
+     * <p>
+     * This is for use with twitch
+     *
+     * @param user the user who was timed out
+     * @param channel the channel where user was timed out
+     */
+    protected void onUserTimedOut(User user, Channel channel) {
+
+    }
+
+    /**
+     * This method is called whenever chat is cleared in a channel.
+     * <p>
+     * This is for use with twitch
+     *
+     * @param channel the channel where chat was cleared
+     */
+    protected void onChatCleared(Channel channel) {
+
     }
 
     /**
