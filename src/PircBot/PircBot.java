@@ -2328,6 +2328,7 @@ public abstract class PircBot implements ReplyConstants {
      * method, be sure to either mimic its functionality or to call
      * super.onTime(...);
      *
+     * @param sender User sending the TIME request.
      * @param target The target of the TIME request, be it our nick or a channel
      * name.
      */
