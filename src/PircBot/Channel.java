@@ -13,6 +13,7 @@ import java.util.*;
 public class Channel implements Iterable<User> {
 
     private ConcurrentHashMap<String, User> users;
+    private List<String> customEmotes;
     private String name;
     private String server;
     private String broadcasterLanguage = "";
@@ -31,6 +32,7 @@ public class Channel implements Iterable<User> {
         this.name = name;
         this.server = server;
         users = new ConcurrentHashMap<>();
+        customEmotes = Collections.synchronizedList(new ArrayList<>());
     }
 
     /**
@@ -45,6 +47,7 @@ public class Channel implements Iterable<User> {
         this.users = users;
         this.name = name;
         this.server = server;
+        customEmotes = Collections.synchronizedList(new ArrayList<>());
     }
 
     /**
@@ -62,6 +65,7 @@ public class Channel implements Iterable<User> {
         for (User el : users) {
             this.users.put(el.getNick(), el);
         }
+        customEmotes = Collections.synchronizedList(new ArrayList<>());
     }
 
     /**
@@ -202,40 +206,99 @@ public class Channel implements Iterable<User> {
     public boolean isR9k() {
         return r9k;
     }
+
     /**
      * Sets the R9K Status of the channel.
+     *
      * @param r9k R9K Status
      */
     public void setR9k(boolean r9k) {
         this.r9k = r9k;
     }
+
     /**
      * Returns the status of Slow Mode on the channel.
+     *
      * @return True if Slow Mode > 0, false if Slow Mode = 0.
      */
     public boolean isSlow() {
         return slow == 0;
     }
+
     /**
      * Sets the slow mode for the channel.
+     *
      * @param slow Integer for number of seconds between messages.
      */
     public void setSlow(int slow) {
         this.slow = slow;
     }
+
     /**
      * Checks the Sub-Only chat status.
+     *
      * @return True if the channel is in Sub-Only mode, false otherwise
      */
     public boolean isSubsOnly() {
         return subsOnly;
     }
+
     /**
      * Sets the Sub-Only status in the channel.
+     *
      * @param subsOnly Sub-Only status.
      */
     public void setSubsOnly(boolean subsOnly) {
         this.subsOnly = subsOnly;
+    }
+
+    /**
+     * Sets the Custom Emote List for this channel.
+     *
+     * @param emotes List of Strings for emotes.
+     */
+    public synchronized void setEmoteList(List<String> emotes) {
+        this.customEmotes = Collections.synchronizedList(emotes);
+    }
+
+    /**
+     * Adds a custom emote name to the list for this channel.
+     *
+     * @param emote Emote to add.
+     */
+    public synchronized void addEmote(String emote) {
+        this.customEmotes.add(emote);
+    }
+
+    /**
+     * Removes a custom emote from the list for this channel.
+     *
+     * @param emote Emote to add.
+     */
+    public synchronized void removeEmote(String emote) {
+        this.customEmotes.remove(emote);
+    }
+
+    /**
+     * Checks to see if an emote exists in this channel.
+     *
+     * @param emote Emote to check for
+     * @return True if it is an emote for this channel, false otherwise.
+     */
+    public synchronized boolean isEmote(String emote) {
+        for (String el : this.customEmotes) {
+            if (emote.equals(el)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Returns the current list of emotes for this channel.
+     * @return List containing strings of emotes for this channel.
+     */
+    public synchronized List<String> getEmotes(){
+        return this.customEmotes;
     }
 
     @Override

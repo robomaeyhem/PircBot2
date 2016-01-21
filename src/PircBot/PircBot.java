@@ -359,10 +359,13 @@ public abstract class PircBot implements ReplyConstants {
      * Joins a channel.
      *
      * @param channel The name of the channel to join (eg "#cs").
+     * @return Channel object created during this process.
      */
-    public void joinChannel(String channel) {
+    public Channel joinChannel(String channel) {
         this.sendRawLine("JOIN " + channel);
-        this._channels.put(channel, new Channel(channel, this.getServer()));
+        Channel chan = new Channel(channel, this.getServer());
+        this._channels.put(channel, chan);
+        return chan;
     }
 
     /**
@@ -370,9 +373,10 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param channel The name of the channel to join (eg "#cs").
      * @param key The key that will be used to join the channel.
+     * @return Channel object created during this process.
      */
-    public void joinChannel(String channel, String key) {
-        this.joinChannel(channel + " " + key);
+    public Channel joinChannel(String channel, String key) {
+        return this.joinChannel(channel + " " + key);
     }
 
     /**
