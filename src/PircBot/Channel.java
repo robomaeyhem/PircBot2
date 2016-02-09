@@ -20,6 +20,7 @@ public class Channel implements Iterable<User> {
     private boolean r9k = false;
     private int slow = 0;
     private boolean subsOnly = false;
+    private boolean emoteOnly = false;
 
     /**
      * Constructs a new Channel Object with only the name and server. This
@@ -250,6 +251,24 @@ public class Channel implements Iterable<User> {
      */
     public void setSubsOnly(boolean subsOnly) {
         this.subsOnly = subsOnly;
+    }
+
+    /**
+     * Gets the emote-only status of this channel
+     *
+     * @return true if emote-only is on, false otherwise
+     */
+    public boolean isEmoteOnly() {
+        return emoteOnly;
+    }
+
+    /**
+     * Sets the emote-only status of this channel
+     *
+     * @param emoteOnly emote-only status
+     */
+    public void setEmoteOnly(boolean emoteOnly) {
+        this.emoteOnly = emoteOnly;
     }
 
     /**

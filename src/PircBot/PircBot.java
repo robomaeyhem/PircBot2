@@ -983,28 +983,36 @@ public abstract class PircBot implements ReplyConstants {
                         }
                         tags.put(key, value);
                         channel.setBroadcasterLanguage(tags.get("broadcaster-lang"));
-                        boolean r9k = false;
+                        boolean r9k;
                         try {
                             r9k = tags.get("r9k").equals("1");
                         } catch (Exception ex) {
                             r9k = false;
                         }
                         channel.setR9k(r9k);
-                        int slow = 0;
+                        int slow;
                         try {
                             slow = Integer.parseInt(tags.get("slow"));
                         } catch (Exception ex) {
                             slow = 0;
                         }
                         channel.setSlow(slow);
-                        boolean subs = false;
+                        boolean subs;
                         try {
                             subs = tags.get("subs-only").equals("1");
                         } catch (Exception ex) {
                             subs = false;
                         }
                         channel.setSubsOnly(subs);
-                    }   break;
+                        boolean emoteOnly;
+                        try {
+                            emoteOnly = tags.get("emote-only").equals("1");
+                        } catch (Exception ex) {
+                            emoteOnly = false;
+                        }
+                        channel.setEmoteOnly(emoteOnly);
+                    }
+                    break;
                 default:
                     for (String tag : ircTags.split(";")) {
                         String[] kv = tag.split("=");
@@ -1029,18 +1037,20 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("user-id")) {
                             user.setId(Long.parseLong(value));
                         }
-                    }   long userID = -1;
+                    }
+                    long userID;
                     try {
                         userID = Long.parseLong(tags.get("user-id"));
                     } catch (Exception ex) {
                         userID = -1;
-                    }   boolean sub = false;
+                    }
+                    boolean sub;
                     try {
                         sub = tags.get("subscriber").equals("1");
                     } catch (Exception ex) {
                         sub = false;
                     }
-                    boolean turbo = false;
+                    boolean turbo;
                     try {
                         turbo = tags.get("turbo").equals("1");
                     } catch (Exception ex) {
@@ -3003,6 +3013,18 @@ public abstract class PircBot implements ReplyConstants {
                 channels.add(el);
             });
             return channels.toArray(new String[channels.size()]);
+        }
+    }
+
+    /**
+     * Returns a channel object that this bot is connected to from name. If the
+     * bot is not connected to the channel, returns null.
+     *
+     * @param channel channel to get
+     */
+    public Channel getChannel(String channel) {
+        synchronized (_channels) {
+            return this._channels.get(channel);
         }
     }
 
