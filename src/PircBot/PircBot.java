@@ -62,7 +62,7 @@ public abstract class PircBot implements ReplyConstants {
      * The definitive version number of this release of PircBot. (Note: Change
      * this before automatically building releases)
      */
-    public static final String VERSION = "1.5.3";
+    public static final String VERSION = "1.5.4";
 
     private static final int OP_ADD = 1;
     private static final int OP_REMOVE = 2;
