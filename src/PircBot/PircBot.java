@@ -3021,6 +3021,7 @@ public abstract class PircBot implements ReplyConstants {
      * bot is not connected to the channel, returns null.
      *
      * @param channel channel to get
+     * @return Channel object
      */
     public Channel getChannel(String channel) {
         synchronized (_channels) {
