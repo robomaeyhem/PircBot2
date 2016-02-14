@@ -62,7 +62,7 @@ public abstract class PircBot implements ReplyConstants {
      * The definitive version number of this release of PircBot. (Note: Change
      * this before automatically building releases)
      */
-    public static final String VERSION = "1.5.4";
+    public static final String VERSION = "1.5.5";
 
     private static final int OP_ADD = 1;
     private static final int OP_REMOVE = 2;
@@ -957,15 +957,15 @@ public abstract class PircBot implements ReplyConstants {
         if (target.startsWith("#")) {
             channel = _channels.get(target);
         }
-        User user = null;
+        User user;
         if (channel == null) {
             user = new User(sourceNick, target, System.currentTimeMillis());
         } else if (channel.containsUser(sourceNick)) {
             user = channel.getUser(sourceNick);
         } else {
             user = new User(sourceNick, channel);
-            user.setLastMessage(System.currentTimeMillis());
         }
+        user.setLastMessage(System.currentTimeMillis());
         HashMap<String, String> tags = new HashMap<>();
         if (containsIRC3) {
             switch (command) {

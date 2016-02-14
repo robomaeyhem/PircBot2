@@ -266,7 +266,7 @@ public class User implements Comparable {
         if (isBot(this.getNick())) {
             return false;
         }
-        if (isAFK == true) {
+        if (isAFK) {
             return true;
         }
         long currentTime = System.currentTimeMillis();
