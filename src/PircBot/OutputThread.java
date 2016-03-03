@@ -38,7 +38,7 @@ public class OutputThread extends Thread {
     OutputThread(PircBot bot, Queue outQueue) {
         _bot = bot;
         _outQueue = outQueue;
-        this.setName("PircOutput-"+bot.getServer());
+        this.setName("Pirc-Output-"+bot.getServer()+"-"+bot.getNick());
     }
 
     /**

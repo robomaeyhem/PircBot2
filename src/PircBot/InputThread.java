@@ -43,7 +43,7 @@ public class InputThread extends Thread {
         _socket = socket;
         _breader = breader;
         _bwriter = bwriter;
-        this.setName("PircInput-"+bot.getServer());
+        this.setName("Pirc-Input-"+bot.getServer()+"-"+bot.getNick());
     }
     
     
