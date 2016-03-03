@@ -1,5 +1,5 @@
 /build/
 /dist/README.TXT
-nbproject/private/private.xml
+nbproject/*
 /src/PircBot/Test.java
-nbproject/private/private.xml
+nbproject/private/*
