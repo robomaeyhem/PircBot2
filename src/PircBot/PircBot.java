@@ -167,7 +167,7 @@ public abstract class PircBot implements ReplyConstants {
         _password = password;
 
         if (isConnected()) {
-            throw new IOException("The PircBot is already connected to an IRC server.  Disconnect first.");
+            throw new IrcException("The PircBot is already connected to an IRC server.  Disconnect first.");
         }
 
         // Don't clear the outqueue - there might be something important in it!
@@ -468,6 +468,30 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @see Colors
      */
+    public void sendMessage(Channel target, String message) {
+        sendMessage(target.getChannelName(), message);
+    }
+
+    /**
+     * Sends a message to a channel or a private message to a user. These
+     * messages are added to the outgoing message queue and sent at the earliest
+     * possible opportunity.
+     * <p>
+     * Some examples: -
+     * <pre>    // Send the message "Hello!" to the channel #cs.
+     *    sendMessage("#cs", "Hello!");
+     *
+     *    // Send a private message to Paul that says "Hi".
+     *    sendMessage("Paul", "Hi");</pre>
+     *
+     * You may optionally apply colours, boldness, underlining, etc to the
+     * message by using the <code>Colors</code> class.
+     *
+     * @param target The name of the channel or user nick to send to.
+     * @param message The message to send.
+     *
+     * @see Colors
+     */
     public void sendMessage(String target, String message) {
         _outQueue.add("PRIVMSG " + target + " :" + message);
     }
@@ -477,17 +501,23 @@ public abstract class PircBot implements ReplyConstants {
      * order to use this, you must send <code>CAP REQ :twitch.tv/commands</code>
      * to the server, or else WHISPERs cannot be sent or received to the bot.
      *
-     * @param channel Channel to send the Whisper through
      * @param target Target to send the Whisper to
      * @param message Message to send to the target.
      */
-    public void sendWhisper(String channel, String target, String message) {
-        if (channel.isEmpty()) {
-            channel = "#jtv";
-        }
-        if (channel.charAt(0) != '#') {
-            channel = "#" + channel;
-        }
+    public void sendWhisper(User target, String message) {
+        sendWhisper(target.getNick(), message);
+    }
+
+    /**
+     * Sends a whisper to the server. This is used mainly for Twitch TV. In
+     * order to use this, you must send <code>CAP REQ :twitch.tv/commands</code>
+     * to the server, or else WHISPERs cannot be sent or received to the bot.
+     *
+     * @param target Target to send the Whisper to
+     * @param message Message to send to the target.
+     */
+    public void sendWhisper(String target, String message) {
+        String channel = "#jtv";
         _outQueue.add("PRIVMSG " + channel + " :/w " + target + " " + message);
     }
 
@@ -907,38 +937,34 @@ public abstract class PircBot implements ReplyConstants {
                 sourceNick = senderInfo.substring(1, exclamation);
                 sourceLogin = senderInfo.substring(exclamation + 1, at);
                 sourceHostname = senderInfo.substring(at + 1);
-            } else {
+            } else if (tokenizer.hasMoreTokens()) {
+                String token = command;
 
-                if (tokenizer.hasMoreTokens()) {
-                    String token = command;
-
-                    int code = -1;
-                    try {
-                        code = Integer.parseInt(token);
-                    } catch (NumberFormatException e) {
-                        // Keep the existing value.
-                    }
-
-                    if (code != -1) {
-                        String errorStr = token;
-                        String response = line.substring(line.indexOf(errorStr, senderInfo.length()) + 4, line.length());
-                        this.processServerResponse(code, response);
-                        // Return from the method.
-                        return;
-                    } else {
-                        // This is not a server response.
-                        // It must be a nick without login and hostname.
-                        // (or maybe a NOTICE or suchlike from the server)
-                        sourceNick = senderInfo;
-                        target = token;
-                    }
-                } else {
-                    // We don't know what this line means.
-                    this.onUnknown(line);
-                    // Return from the method;
-                    return;
+                int code = -1;
+                try {
+                    code = Integer.parseInt(token);
+                } catch (NumberFormatException e) {
+                    // Keep the existing value.
                 }
 
+                if (code != -1) {
+                    String errorStr = token;
+                    String response = line.substring(line.indexOf(errorStr, senderInfo.length()) + 4, line.length());
+                    this.processServerResponse(code, response);
+                    // Return from the method.
+                    return;
+                } else {
+                    // This is not a server response.
+                    // It must be a nick without login and hostname.
+                    // (or maybe a NOTICE or suchlike from the server)
+                    sourceNick = senderInfo;
+                    target = token;
+                }
+            } else {
+                // We don't know what this line means.
+                this.onUnknown(line);
+                // Return from the method;
+                return;
             }
         }
         command = command.toUpperCase();
