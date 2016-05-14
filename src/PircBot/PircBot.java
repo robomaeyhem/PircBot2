@@ -1207,7 +1207,6 @@ public abstract class PircBot implements ReplyConstants {
                     int duration = (tags.get("ban-duration") == null || tags.get("ban-duration").isEmpty() ? -1 : Integer.parseInt(tags.get("ban-duration")));
                     this.onUserTimedOut(ch.getUser(l[1].substring(1)), ch, duration, tags.get("ban-reason"));
                 } catch (NullPointerException npe) {
-                    npe.printStackTrace();
                 }
             }
         } else {
