@@ -1039,6 +1039,21 @@ public abstract class PircBot implements ReplyConstants {
                         channel.setEmoteOnly(emoteOnly);
                     }
                     break;
+                case "CLEARCHAT":
+                    for (String tag : ircTags.split(";")) {
+                        String[] kv = tag.split("=");
+                        String key = kv[0];
+                        String value;
+                        if (kv.length == 1) {
+                            value = "";
+                        } else if (key.equalsIgnoreCase("ban-reason")) {
+                            value = kv[1].replace("\\s", " ");
+                        } else {
+                            value = kv[1];
+                        }
+                        tags.put(key, value);
+                    }
+                    break;
                 default:
                     for (String tag : ircTags.split(";")) {
                         String[] kv = tag.split("=");
@@ -1189,9 +1204,10 @@ public abstract class PircBot implements ReplyConstants {
                 this.onChatCleared(ch);
             } else { // User was timed out
                 try {
-                    this.onUserTimedOut(ch.getUser(l[1].substring(1)), ch);
+                    int duration = (tags.get("ban-duration") == null || tags.get("ban-duration").isEmpty() ? -1 : Integer.parseInt(tags.get("ban-duration")));
+                    this.onUserTimedOut(ch.getUser(l[1].substring(1)), ch, duration, tags.get("ban-reason"));
                 } catch (NullPointerException npe) {
-
+                    npe.printStackTrace();
                 }
             }
         } else {
@@ -2394,8 +2410,11 @@ public abstract class PircBot implements ReplyConstants {
      *
      * @param user the user who was timed out
      * @param channel the channel where user was timed out
+     * @param duration Duration user was timed out for. If duration is -1, the
+     * ban is permanent.
+     * @param reason Reason user was timed out.
      */
-    protected void onUserTimedOut(User user, Channel channel) {
+    protected void onUserTimedOut(User user, Channel channel, int duration, String reason) {
 
     }
 
