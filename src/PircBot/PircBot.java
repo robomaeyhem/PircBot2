@@ -1410,6 +1410,14 @@ public abstract class PircBot implements ReplyConstants {
      */
     protected void onMessage(Channel channel, User sender, String message) {
     }
+    /**
+     * This method is called whenever a message is sent from the bot.
+     * @param channel Channel the message was sent to.
+     * @param message Message that was sent.
+     */
+    protected void onSentMessage(String channel, String message) {
+        
+    }
 
     /**
      * This method is called whenever a private message is sent to the PircBot.

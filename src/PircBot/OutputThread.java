@@ -38,7 +38,7 @@ public class OutputThread extends Thread {
     OutputThread(PircBot bot, Queue outQueue) {
         _bot = bot;
         _outQueue = outQueue;
-        this.setName("Pirc-Output-"+bot.getServer()+"-"+bot.getNick());
+        this.setName("Pirc-Output-" + bot.getServer() + "-" + bot.getNick());
     }
 
     /**
@@ -78,6 +78,15 @@ public class OutputThread extends Thread {
                 String line = _outQueue.next();
                 if (line != null) {
                     _bot.sendRawLine(line);
+                    if (line.startsWith("PRIVMSG")) {
+                        String msg = "";
+                        try{
+                            msg = line.split(" :", 2)[1];
+                        }catch(Exception ex){
+                            
+                        }
+                        _bot.onSentMessage(line.split("PRIVMSG ", 2)[1].split(" :", 2)[0], line.split(" :", 2)[1]);
+                    }
                 } else {
                     running = false;
                 }
@@ -86,8 +95,10 @@ public class OutputThread extends Thread {
             // Just let the method return naturally...
         }
     }
+
     /**
      * Checks if the queue contains a specified string.
+     *
      * @param input Command to check for
      * @return True if found, false if not found or null.
      */
