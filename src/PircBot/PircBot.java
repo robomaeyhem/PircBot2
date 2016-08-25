@@ -980,6 +980,16 @@ public abstract class PircBot implements ReplyConstants {
         if (target.contains("ROOMSTATE") && line.contains("#")) {
             channel = _channels.get("#" + line.split("#", 2)[1]); //topkek
         }
+        if (target.contains("USERSTATE") && line.contains("#")) {
+            channel = _channels.get("#" + line.split("#", 2)[1]); //kekpot
+        }
+        if (target.contains("USERNOTICE") && line.contains("#")) {
+            channel = _channels.get("#" + line.split("#", 2)[1]); //Highest kek
+        }
+        if (target.contains("GLOBALUSERSTATE")) {
+            // Does GLOBALUSERSTATE still work? Twitch API documentation is really bad, and I can't see it working on my end. https://github.com/justintv/Twitch-API/blob/master/IRC.md#globaluserstate
+            // channel = _channels.get("#" + line.split("#", 2)[1]);
+        }
         if (target.startsWith("#")) {
             channel = _channels.get(target);
         }
@@ -1038,6 +1048,113 @@ public abstract class PircBot implements ReplyConstants {
                         }
                         channel.setEmoteOnly(emoteOnly);
                     }
+                case "USERSTATE":
+                    for (String tag : ircTags.split(";")) {
+                        String[] kv = tag.split("=");
+                        String key = kv[0];
+                        String value;
+                        if (kv.length == 1) {
+                            value = "";
+                        } else {
+                            value = kv[1];
+                        }
+                        tags.put(key, value);
+                        if (key.equalsIgnoreCase("display-name")) {
+                            user.changeName(value);
+                        } else if (key.equalsIgnoreCase("color")) {
+                            user.setColor(value);
+                        } else if (key.equalsIgnoreCase("subscriber")) {
+                            user.setSubscriber(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("turbo")) {
+                            user.setTurbo(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("mod")) {
+                            user.setMod(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("user-type")) {
+                            user.setUserType(value);
+                            this.onUserState(user, channel);
+                        } else if (key.equalsIgnoreCase("emote-sets")) {
+                            user.setEmoteSets(value);
+                        } else if (key.equalsIgnoreCase("badges")) {
+                            user.setBadges(value);
+                        }
+                    }
+                    break;
+                case "GLOBALUSERSTATE":
+                    for (String tag : ircTags.split(";")) {
+                        String[] kv = tag.split("=");
+                        String key = kv[0];
+                        String value;
+                        if (kv.length == 1) {
+                            value = "";
+                        } else {
+                            value = kv[1];
+                        }
+                        tags.put(key, value);
+                        if (key.equalsIgnoreCase("display-name")) {
+                            user.changeName(value);
+                        } else if (key.equalsIgnoreCase("color")) {
+                            user.setColor(value);
+                        } else if (key.equalsIgnoreCase("subscriber")) {
+                            user.setSubscriber(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("turbo")) {
+                            user.setTurbo(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("mod")) {
+                            user.setMod(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("user-type")) {
+                            user.setUserType(value);
+                            this.onGlobalUserState(user);
+                        } else if (key.equalsIgnoreCase("emote-sets")) {
+                            user.setEmoteSets(value);
+                        } else if (key.equalsIgnoreCase("badges")) {
+                            user.setBadges(value);
+                        }
+                    }
+                    break;
+                case "USERNOTICE":
+                    for (String tag : ircTags.split(";")) {
+                        String[] kv = tag.split("=");
+                        String key = kv[0];
+                        String value;
+                        if (kv.length == 1) {
+                            value = "";
+                        } else if (key.equalsIgnoreCase("system-msg")) {
+                            value = kv[1].replace("\\s", " ");
+                        } else {
+                            value = kv[1];
+                        }
+                        tags.put(key, value);
+                        if (key.equalsIgnoreCase("display-name")) {
+                            user.changeName(value);
+                        } else if (key.equalsIgnoreCase("color")) {
+                            user.setColor(value);
+                        } else if (key.equalsIgnoreCase("msg-id")) {
+                            user.setMsgId(value);
+                        } else if (key.equalsIgnoreCase("emotes")) {
+                            user.setEmotes(value);
+                        } else if (key.equalsIgnoreCase("msg-param-months")) {
+                            user.setConsecutiveMonths(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("room-id")) {
+                            user.setRoomId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("user-id")) {
+                            user.setId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("system-msg")) {
+                            user.setSystemMsg(value);
+                        } else if (key.equalsIgnoreCase("login")) {
+                            user.setUserLogin(value);
+                        } else if (key.equalsIgnoreCase("subscriber")) {
+                            user.setSubscriber(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("turbo")) {
+                            user.setTurbo(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("mod")) {
+                            user.setMod(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("badges")) {
+                            user.setBadges(value);
+                        } else if (key.equalsIgnoreCase("user-type")) {
+                            String resubMessage = line.split(channel + " ", 2)[1];
+                            user.setUserType(value);
+                            this.onUserNotice(channel, user, resubMessage);
+                        }
+                    }
                     break;
                 case "CLEARCHAT":
                     for (String tag : ircTags.split(";")) {
@@ -1073,10 +1190,22 @@ public abstract class PircBot implements ReplyConstants {
                             user.setSubscriber(value.equals("1"));
                         } else if (key.equalsIgnoreCase("turbo")) {
                             user.setTurbo(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("mod")) {
+                            user.setMod(value.equals("1"));
                         } else if (key.equalsIgnoreCase("user-type")) {
                             user.setUserType(value);
                         } else if (key.equalsIgnoreCase("user-id")) {
                             user.setId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("room-id")) {
+                            user.setRoomId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("emotes")) {
+                            user.setEmotes(value);
+                        } else if (key.equalsIgnoreCase("badges")) {
+                            user.setBadges(value);
+                        } else if (key.equalsIgnoreCase("id")) {
+                            user.setMessageId(value);
+                        } else if (key.equalsIgnoreCase("bits")) {
+                            user.setBits(Long.parseLong(value));
                         }
                     }
                     long userID;
@@ -1084,6 +1213,24 @@ public abstract class PircBot implements ReplyConstants {
                         userID = Long.parseLong(tags.get("user-id"));
                     } catch (Exception ex) {
                         userID = -1;
+                    }
+                    long roomId;
+                    try {
+                        roomId = Long.parseLong(tags.get("room-id"));
+                    } catch (Exception ex) {
+                        roomId = -1;
+                    }
+                    long consecutiveMonths;
+                    try {
+                        consecutiveMonths = Long.parseLong(tags.get("msg-param-months"));
+                    } catch (Exception ex) {
+                        consecutiveMonths = -1;
+                    }
+                    long bits;
+                    try {
+                        bits = Long.parseLong(tags.get("bits"));
+                    } catch (Exception ex) {
+                        bits = -1;
                     }
                     boolean sub;
                     try {
@@ -1097,7 +1244,13 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         turbo = false;
                     }
-                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, tags.get("user-type"), userID);
+                    boolean mod;
+                    try {
+                        mod = tags.get("mod").equals("1");
+                    } catch (Exception ex) {
+                        mod = false;
+                    }
+                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, mod, tags.get("user-type"), userID, roomId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"));
                     break;
             }
         }
@@ -1144,6 +1297,14 @@ public abstract class PircBot implements ReplyConstants {
         } else if (command.equals("WHISPER")) {
             // Whisper to us.
             this.onWhisper(user, line.split("WHISPER ", 2)[1].split(" :", 2)[0], line.split(" :", 2)[1]);
+
+        } else if (command.equals("HOSTTARGET")) {
+            //  Get Hosttarget
+            String hostingChannel = line.split("HOSTTARGET ", 2)[1].split(" :", 2)[0];
+            String targetChannel = line.split(" :", 2)[1].split(" ", 2)[0];
+            String targetChannelViewers = line.split(targetChannel + " ", 2)[1]; // Most of the times, it returns a "-", instead of a valid integer
+            this.onHostTarget(hostingChannel, targetChannel, targetChannelViewers);
+
         } else if (command.equals("JOIN")) {
             // Someone is joining a channel.
             //String channel = target;
@@ -1410,13 +1571,15 @@ public abstract class PircBot implements ReplyConstants {
      */
     protected void onMessage(Channel channel, User sender, String message) {
     }
+
     /**
      * This method is called whenever a message is sent from the bot.
+     *
      * @param channel Channel the message was sent to.
      * @param message Message that was sent.
      */
     protected void onSentMessage(String channel, String message) {
-        
+
     }
 
     /**
@@ -2426,6 +2589,49 @@ public abstract class PircBot implements ReplyConstants {
     }
 
     /**
+     * This method is called whenever a USERSTATE line is received from Twitch
+     * TV IRC Servers.
+     * <p>
+     * This is for use with twitch
+     *
+     * @param user username
+     * @param channel channel name
+     */
+    protected void onUserState(User user, Channel channel) {
+
+    }
+
+    /**
+     * This method is called whenever a USERNOTICE resubscription line is
+     * received from Twitch TV IRC Servers.
+     * <p>
+     * This is for use with twitch
+     * 
+     * This is untested since there's no way to send a test line to a channel
+     * You'd have to join a channel that has partnership and wait for an user to
+     * resubscribe
+     *
+     * @param channel Channel name
+     * @param sender Username
+     * @param message Resubscription message
+     */
+    protected void onUserNotice(Channel channel, User sender, String message) {
+
+    }
+
+    /**
+     * This method is called whenever a GLOBALUSERSTATE line is received from
+     * Twitch TV IRC Servers.
+     * <p>
+     * This is for use with twitch
+     *
+     * @param user username
+     */
+    protected void onGlobalUserState(User user) {
+
+    }
+
+    /**
      * This method is called whenever chat is cleared in a channel.
      * <p>
      * This is for use with twitch
@@ -2433,6 +2639,19 @@ public abstract class PircBot implements ReplyConstants {
      * @param channel the channel where chat was cleared
      */
     protected void onChatCleared(Channel channel) {
+
+    }
+
+    /**
+     * This method is called whenever a channel hosts another channel
+     * <p>
+     * This is for use with Twitch TV
+     *
+     * @param hostingChannel that is hosting
+     * @param targetChannel the chat that is being hosted
+     * @param viewers viewer count for the channel that is being hosted
+     */
+    protected void onHostTarget(String hostingChannel, String targetChannel, String viewers) {
 
     }
 
@@ -3213,9 +3432,20 @@ public abstract class PircBot implements ReplyConstants {
      * @param color User color info
      * @param subscriber User subscriber
      * @param turbo User turbo
+     * @param mod User moderator
      * @param userType Usertype
+     * @param emotes emote String
+     * @param badges Badges string
+     * @param systemMsg Resubscription System  string
+     * @param userLogin Lowercase username name
+     * @param emoteSets Emoticon Sets string
+     * @param messageId Unique identifier for a message.
+     * @param roomId ID of the channel.
+     * @param consecutiveMonths number of consecutive months the user has subscribed for in a resub notice.
+     * @param bits Amount of Bits user has used.
+     * @param msgId Twitch's type of notice
      */
-    private void updateUser(String username, String color, boolean subscriber, boolean turbo, String userType, long id) {
+    private void updateUser(String username, String color, boolean subscriber, boolean turbo, boolean mod, String userType, long id, long roomId, long consecutiveMonths, String emotes, String badges, String messageId, long bits, String emoteSets, String msgId, String systemMsg, String userLogin) {
         synchronized (_channels) {
             for (Channel el : _channels.values()) {
                 User user = el.getUser(username);
@@ -3225,8 +3455,19 @@ public abstract class PircBot implements ReplyConstants {
                 user.setColor(color);
                 user.setSubscriber(subscriber);
                 user.setTurbo(turbo);
+                user.setMod(mod);
                 user.setUserType(userType);
                 user.setId(id);
+                user.setEmotes(emotes);
+                user.setMsgId(msgId);
+                user.setBadges(badges);
+                user.setSystemMsg(systemMsg);
+                user.setUserLogin(userLogin);
+                user.setEmoteSets(emoteSets);
+                user.setMessageId(messageId);
+                user.setRoomId(roomId);
+                user.setConsecutiveMonths(consecutiveMonths);
+                user.setBits(bits);
             }
         }
     }

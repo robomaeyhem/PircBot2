@@ -39,8 +39,19 @@ public class User implements Comparable {
     private String color;
     private boolean subscriber;
     private boolean turbo;
+    private String emotes;
+    private String msgId;
+    private String badges;
+    private String systemMsg;
+    private String userLogin;
+    private String emoteSets;
     private String userType;
+    private String messageId;
     private long id;
+    private long roomId;
+    private long consecutiveMonths;
+    private long bits;
+    private boolean mod;
 
     public static boolean isBot(String username) {
         username = username.toLowerCase();
@@ -68,9 +79,20 @@ public class User implements Comparable {
         this.previousMessage = "";
         this.color = "";
         this.subscriber = false;
+        this.mod = false;
         this.turbo = false;
+        this.emotes = "";
+        this.msgId = "";
+        this.badges = "";
+        this.systemMsg = "";
+        this.userLogin = "";
+        this.emoteSets = "";
         this.userType = "";
         this.id = 0;
+        this.roomId = 0;
+        this.consecutiveMonths = 0;
+        this.bits = 0;
+        this.messageId = "";
     }
 
     /**
@@ -100,9 +122,20 @@ public class User implements Comparable {
         this.previousMessage = "";
         this.color = "";
         this.subscriber = false;
+        this.mod = false;
         this.turbo = false;
+        this.emotes = "";
+        this.msgId = "";
+        this.badges = "";
+        this.systemMsg = "";
+        this.userLogin = "";
+        this.emoteSets = "";
         this.userType = "";
         this.id = 0;
+        this.roomId = 0;
+        this.consecutiveMonths = 0;
+        this.bits = 0;
+        this.messageId = "";
     }
 
     /**
@@ -123,9 +156,20 @@ public class User implements Comparable {
         this.previousMessage = "";
         this.color = "";
         this.subscriber = false;
+        this.mod = false;
         this.turbo = false;
+        this.emotes = "";
+        this.msgId = "";
+        this.badges = "";
+        this.systemMsg = "";
+        this.userLogin = "";
+        this.emoteSets = "";
         this.userType = "";
         this.id = 0;
+        this.roomId = 0;
+        this.consecutiveMonths = 0;
+        this.bits = 0;
+        this.messageId = "";
     }
 
     /**
@@ -148,9 +192,20 @@ public class User implements Comparable {
         this.previousMessage = "";
         this.color = "";
         this.subscriber = false;
+        this.mod = false;
         this.turbo = false;
+        this.emotes = "";
+        this.msgId = "";
+        this.badges = "";
+        this.systemMsg = "";
+        this.userLogin = "";
+        this.emoteSets = "";
         this.userType = "";
         this.id = 0;
+        this.roomId = 0;
+        this.consecutiveMonths = 0;
+        this.bits = 0;
+        this.messageId = "";
     }
 
     /**
@@ -164,10 +219,21 @@ public class User implements Comparable {
      * @param isVoice Is user voiced?
      * @param color Color String of the User
      * @param isSubscriber Is user a Channel Sub?
+     * @param isMod Is user a Channel Moderator?
      * @param isTurbo Is user a Turbo user?
+     * @param emotes Emote String of the User
+     * @param msgId Twitch System Message Id https://github.com/justintv/Twitch-API/blob/master/IRC.md#notice
      * @param userType User Type tag info
+     * @param badges Get chat icons such as moderator, turbo, subscriber, bits
+     * @param systemMsg Resubscription System Message
+     * @param userLogin Username lowercase name for resubscription lines
+     * @param emoteSets Get emote sets for USERSTATE lines
+     * @param messageId Unique identifier for a message.
+     * @param roomId ID of the channel.
+     * @param consecutiveMonths number of consecutive months the user has subscribed for in a resub notice.
+     * @param bits Amount of Bits user has used.
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean isSubscriber, boolean isTurbo, String userType) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean isSubscriber, boolean isMod, boolean isTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String messageId, String emoteSets, String msgId, long roomId, long bits, long consecutiveMonths) {
         this._nick = _nick;
         this.lastMessage = lastMessage;
         this.isAFK = isAFK;
@@ -177,9 +243,20 @@ public class User implements Comparable {
         this.previousMessage = "";
         this.color = color;
         this.subscriber = isSubscriber;
+        this.mod = isMod;
         this.turbo = isTurbo;
+        this.emotes = emotes;
+        this.msgId = msgId;
         this.userType = userType;
         this.id = 0;
+        this.roomId = 0;
+        this.consecutiveMonths = 0;
+        this.bits = 0;
+        this.badges = badges;
+        this.systemMsg = systemMsg;
+        this.userLogin = userLogin;
+        this.emoteSets = emoteSets;
+        this.messageId = messageId;
     }
 
     /**
@@ -198,9 +275,20 @@ public class User implements Comparable {
         this.previousMessage = "";
         this.color = "";
         this.subscriber = false;
+        this.mod = false;
         this.turbo = false;
+        this.emotes = "";
+        this.msgId = "";
         this.userType = "";
         this.id = 0;
+        this.roomId = 0;
+        this.consecutiveMonths = 0;
+        this.bits = 0;
+        this.badges = "";
+        this.systemMsg = "";
+        this.userLogin = "";
+        this.emoteSets = "";
+        this.messageId = "";
     }
 
     /**
@@ -355,6 +443,63 @@ public class User implements Comparable {
         this.id = id;
     }
 
+    /**
+     * Get the twitch room-id tag for this channel (if tags are enabled)
+     *
+     * @return roomId
+     */
+    public long getRoomId() {
+        return this.roomId;
+    }
+
+    /**
+     * Set the twitch room-id for this channel
+     *
+     * @param roomId room-id
+     */
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
+
+
+    /**
+     * Get the twitch msg-param-months tag an user in a subscription based channel (if tags are enabled)
+     *
+     * @return consecutiveMonths
+     */
+    public long getConsecutiveMonths() {
+        return this.consecutiveMonths;
+    }
+
+    /**
+     * Set the twitch msg-param-months tag an user
+     *
+     * @param consecutiveMonths msg-param-months
+     */
+    public void setConsecutiveMonths(long consecutiveMonths) {
+        this.consecutiveMonths = consecutiveMonths;
+    }
+
+
+    /**
+     * Get the twitch bits tag for an user (if tags are enabled)
+     *
+     * @return bits
+     */
+    public long getBits() {
+        return this.bits;
+    }
+
+    /**
+     * Set the twitch bits for an user
+     *
+     * @param bits bits
+     */
+    public void setBits(long bits) {
+        this.bits = bits;
+    }
+
+
     public String getColor() {
         return color;
     }
@@ -363,12 +508,76 @@ public class User implements Comparable {
         this.color = color;
     }
 
+    public String getEmotes() {
+        return emotes;
+    }
+
+    public void setEmotes(String emotes) {
+        this.emotes = emotes;
+    }
+
+    public String getMsgId() {
+        return msgId;
+    }
+
+    public void setMsgId(String msgId) {
+        this.msgId = msgId;
+    }
+
+    public String getBadges() {
+        return badges;
+    }
+
+    public void setBadges(String badges) {
+        this.badges = badges;
+    }
+
+    public String getSystemMsg() {
+        return systemMsg;
+    }
+
+    public void setSystemMsg(String systemMsg) {
+        this.systemMsg = systemMsg;
+    }
+
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
+    }
+
+    public String getEmoteSets() {
+        return emoteSets;
+    }
+
+    public void setEmoteSets(String emoteSets) {
+        this.emoteSets = emoteSets;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
     public boolean isSubscriber() {
         return subscriber;
     }
 
     public void setSubscriber(boolean subscriber) {
         this.subscriber = subscriber;
+    }
+
+    public boolean isMod() {
+        return mod;
+    }
+
+    public void setMod(boolean mod) {
+        this.mod = mod;
     }
 
     public boolean isTurbo() {
