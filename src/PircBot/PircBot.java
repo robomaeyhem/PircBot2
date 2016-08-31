@@ -1060,7 +1060,7 @@ public abstract class PircBot implements ReplyConstants {
                         }
                         tags.put(key, value);
                         if (key.equalsIgnoreCase("display-name")) {
-                            user.changeName(value);
+                            user.setDisplayName(value);
                         } else if (key.equalsIgnoreCase("color")) {
                             user.setColor(value);
                         } else if (key.equalsIgnoreCase("subscriber")) {
@@ -1091,7 +1091,7 @@ public abstract class PircBot implements ReplyConstants {
                         }
                         tags.put(key, value);
                         if (key.equalsIgnoreCase("display-name")) {
-                            user.changeName(value);
+                            user.setDisplayName(value);
                         } else if (key.equalsIgnoreCase("color")) {
                             user.setColor(value);
                         } else if (key.equalsIgnoreCase("subscriber")) {
@@ -1124,7 +1124,7 @@ public abstract class PircBot implements ReplyConstants {
                         }
                         tags.put(key, value);
                         if (key.equalsIgnoreCase("display-name")) {
-                            user.changeName(value);
+                            user.setDisplayName(value);
                         } else if (key.equalsIgnoreCase("color")) {
                             user.setColor(value);
                         } else if (key.equalsIgnoreCase("msg-id")) {
@@ -1183,7 +1183,7 @@ public abstract class PircBot implements ReplyConstants {
                         }
                         tags.put(key, value);
                         if (key.equalsIgnoreCase("display-name")) {
-                            user.changeName(value);
+                            user.setDisplayName(value);
                         } else if (key.equalsIgnoreCase("color")) {
                             user.setColor(value);
                         } else if (key.equalsIgnoreCase("subscriber")) {
@@ -2606,7 +2606,7 @@ public abstract class PircBot implements ReplyConstants {
      * received from Twitch TV IRC Servers.
      * <p>
      * This is for use with twitch
-     * 
+     *
      * This is untested since there's no way to send a test line to a channel
      * You'd have to join a channel that has partnership and wait for an user to
      * resubscribe
@@ -3436,12 +3436,13 @@ public abstract class PircBot implements ReplyConstants {
      * @param userType Usertype
      * @param emotes emote String
      * @param badges Badges string
-     * @param systemMsg Resubscription System  string
+     * @param systemMsg Resubscription System string
      * @param userLogin Lowercase username name
      * @param emoteSets Emoticon Sets string
      * @param messageId Unique identifier for a message.
      * @param roomId ID of the channel.
-     * @param consecutiveMonths number of consecutive months the user has subscribed for in a resub notice.
+     * @param consecutiveMonths number of consecutive months the user has
+     * subscribed for in a resub notice.
      * @param bits Amount of Bits user has used.
      * @param msgId Twitch's type of notice
      */

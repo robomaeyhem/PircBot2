@@ -29,6 +29,7 @@ import java.util.Objects;
 public class User implements Comparable {
 
     private String _nick;
+    private String displayName;
     private long lastMessage;
     private boolean isAFK;
     private boolean isOP;
@@ -71,6 +72,7 @@ public class User implements Comparable {
      */
     public User(String name, String channel) {
         this._nick = name;
+        this.displayName = name;
         this._channel = channel;
         this.lastMessage = System.currentTimeMillis();
         this.isAFK = false;
@@ -114,6 +116,7 @@ public class User implements Comparable {
      */
     public User(String name, String channel, long lastMessage) {
         this._nick = name;
+        this.displayName = name;
         this._channel = channel;
         this.lastMessage = lastMessage;
         this.isAFK = false;
@@ -148,6 +151,7 @@ public class User implements Comparable {
      */
     public User(String name, String channel, long lastMessage, boolean afk) {
         this._nick = name;
+        this.displayName = name;
         this._channel = channel;
         this.lastMessage = System.currentTimeMillis();
         this.isAFK = afk;
@@ -184,6 +188,7 @@ public class User implements Comparable {
      */
     public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice) {
         this._nick = _nick;
+        this.displayName = _nick;
         this.lastMessage = lastMessage;
         this.isAFK = isAFK;
         this.isOP = isOP;
@@ -235,6 +240,7 @@ public class User implements Comparable {
      */
     public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean isSubscriber, boolean isMod, boolean isTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String messageId, String emoteSets, String msgId, long roomId, long bits, long consecutiveMonths) {
         this._nick = _nick;
+        this.displayName = _nick;
         this.lastMessage = lastMessage;
         this.isAFK = isAFK;
         this.isOP = isOP;
@@ -267,6 +273,7 @@ public class User implements Comparable {
      */
     public User(User user, String channel) {
         _nick = user.getNick();
+        this.displayName = user.getNick();
         _channel = channel;
         this.lastMessage = System.currentTimeMillis();
         this.isAFK = user.isAFK;
@@ -299,7 +306,20 @@ public class User implements Comparable {
     public void changeName(String name) {
         _nick = name;
     }
-
+    /**
+     * Sets the user's Display Name.
+     * @param name New Display Name for the user
+     */
+    public void setDisplayName(String name){
+        displayName = name;
+    }
+    /**
+     * Returns the current Display name for the user.
+     * @return String containing the display name for the user.
+     */
+    public String getDisplayName(){
+        return displayName;
+    }
     /**
      * Returns the current channel of the user
      *
