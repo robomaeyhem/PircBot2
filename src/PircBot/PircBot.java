@@ -978,13 +978,13 @@ public abstract class PircBot implements ReplyConstants {
             target = target.substring(1);
         }
         if (target.contains("ROOMSTATE") && line.contains("#")) {
-            channel = _channels.get("#" + line.split("#", 2)[1]); //topkek
+            channel = _channels.get("#" + line.split("#", 2)[1]); //Get ROOMSTATE Line
         }
         if (target.contains("USERSTATE") && line.contains("#")) {
-            channel = _channels.get("#" + line.split("#", 2)[1]); //kekpot
+            channel = _channels.get("#" + line.split("#", 2)[1]); //Get USERSTATE Line
         }
         if (target.contains("USERNOTICE") && line.contains("#")) {
-            channel = _channels.get("#" + line.split("#", 2)[1]); //Highest kek
+            channel = _channels.get("#" + line.split("#", 2)[1]); //Get USERNOTICE Line
         }
         if (target.contains("GLOBALUSERSTATE")) {
             // Does GLOBALUSERSTATE still work? Twitch API documentation is really bad, and I can't see it working on my end. https://github.com/justintv/Twitch-API/blob/master/IRC.md#globaluserstate
@@ -1064,11 +1064,14 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("color")) {
                             user.setColor(value);
                         } else if (key.equalsIgnoreCase("subscriber")) {
-                            user.setSubscriber(value.equals("1"));
+                            //user.setSubscriber(value.equals(value));
+                            user.setSubscriber(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("turbo")) {
-                            user.setTurbo(value.equals("1"));
+                            //user.setTurbo(value.equals("1"));
+                            user.setTurbo(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("mod")) {
-                            user.setMod(value.equals("1"));
+                            //user.setMod(value.equals("1"));
+                            user.setMod(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("user-type")) {
                             user.setUserType(value);
                             this.onUserState(user, channel);
@@ -1095,11 +1098,14 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("color")) {
                             user.setColor(value);
                         } else if (key.equalsIgnoreCase("subscriber")) {
-                            user.setSubscriber(value.equals("1"));
+                            //user.setSubscriber(value.equals(value));
+                            user.setSubscriber(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("turbo")) {
-                            user.setTurbo(value.equals("1"));
+                            //user.setTurbo(value.equals("1"));
+                            user.setTurbo(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("mod")) {
-                            user.setMod(value.equals("1"));
+                            //user.setMod(value.equals("1"));
+                            user.setMod(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("user-type")) {
                             user.setUserType(value);
                             this.onGlobalUserState(user);
@@ -1135,6 +1141,10 @@ public abstract class PircBot implements ReplyConstants {
                             user.setConsecutiveMonths(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("room-id")) {
                             user.setRoomId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("message-id")) {
+                            user.setWhisperMsgId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("thread-id")) {
+                            user.setWhisperThreadId(value);
                         } else if (key.equalsIgnoreCase("user-id")) {
                             user.setId(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("system-msg")) {
@@ -1142,11 +1152,14 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("login")) {
                             user.setUserLogin(value);
                         } else if (key.equalsIgnoreCase("subscriber")) {
-                            user.setSubscriber(value.equals("1"));
+                            //user.setSubscriber(value.equals(value));
+                            user.setSubscriber(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("turbo")) {
-                            user.setTurbo(value.equals("1"));
+                            //user.setTurbo(value.equals("1"));
+                            user.setTurbo(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("mod")) {
-                            user.setMod(value.equals("1"));
+                            //user.setMod(value.equals("1"));
+                            user.setMod(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         } else if (key.equalsIgnoreCase("user-type")) {
@@ -1187,17 +1200,28 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("color")) {
                             user.setColor(value);
                         } else if (key.equalsIgnoreCase("subscriber")) {
-                            user.setSubscriber(value.equals("1"));
+                            //user.setSubscriber(value.equals(value));
+                            user.setSubscriber(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("turbo")) {
-                            user.setTurbo(value.equals("1"));
+                            //user.setTurbo(value.equals("1"));
+                            user.setTurbo(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("mod")) {
-                            user.setMod(value.equals("1"));
+                            //user.setMod(value.equals("1"));
+                            user.setMod(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("user-type")) {
                             user.setUserType(value);
                         } else if (key.equalsIgnoreCase("user-id")) {
                             user.setId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("sent-ts")) {
+                            user.setSentTs(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("tmi-sent-ts")) {
+                            user.setTmiSentTs(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("room-id")) {
                             user.setRoomId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("message-id")) {
+                            user.setWhisperMsgId(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("thread-id")) {
+                            user.setWhisperThreadId(value);
                         } else if (key.equalsIgnoreCase("emotes")) {
                             user.setEmotes(value);
                         } else if (key.equalsIgnoreCase("badges")) {
@@ -1214,11 +1238,29 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         userID = -1;
                     }
+                    long sentTs;
+                    try {
+                        sentTs = Long.parseLong(tags.get("sent-ts"));
+                    } catch (Exception ex) {
+                        sentTs = -1;
+                    }
+                    long tmiSentTs;
+                    try {
+                        tmiSentTs = Long.parseLong(tags.get("tmi-sent-ts"));
+                    } catch (Exception ex) {
+                        tmiSentTs = -1;
+                    }
                     long roomId;
                     try {
                         roomId = Long.parseLong(tags.get("room-id"));
                     } catch (Exception ex) {
                         roomId = -1;
+                    }
+                    long whisperMsgId;
+                    try {
+                        whisperMsgId = Long.parseLong(tags.get("message-id"));
+                    } catch (Exception ex) {
+                        whisperMsgId = -1;
                     }
                     long consecutiveMonths;
                     try {
@@ -1232,25 +1274,28 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         bits = -1;
                     }
-                    boolean sub;
+                    long sub;
                     try {
-                        sub = tags.get("subscriber").equals("1");
+                        //sub = tags.get("subscriber").equals("1");
+                        sub = Long.parseLong(tags.get("subscriber"));
                     } catch (Exception ex) {
-                        sub = false;
+                        sub = -1;
                     }
-                    boolean turbo;
+                    long turbo;
                     try {
-                        turbo = tags.get("turbo").equals("1");
+                        //turbo = tags.get("turbo").equals("1");
+                        turbo = Long.parseLong(tags.get("turbo"));
                     } catch (Exception ex) {
-                        turbo = false;
+                        turbo = -1;
                     }
-                    boolean mod;
+                    long mod;
                     try {
-                        mod = tags.get("mod").equals("1");
+                        //mod = tags.get("mod").equals("1");
+                        mod = Long.parseLong(tags.get("mod"));
                     } catch (Exception ex) {
-                        mod = false;
+                        mod = -1;
                     }
-                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, mod, tags.get("user-type"), userID, roomId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"));
+                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), sentTs, tmiSentTs);
                     break;
             }
         }
@@ -3436,17 +3481,21 @@ public abstract class PircBot implements ReplyConstants {
      * @param userType Usertype
      * @param emotes emote String
      * @param badges Badges string
+     * @param whisperThreadId Whisper Thread-id string
      * @param systemMsg Resubscription System string
      * @param userLogin Lowercase username name
      * @param emoteSets Emoticon Sets string
      * @param messageId Unique identifier for a message.
      * @param roomId ID of the channel.
+     * @param whisperMsgId Message ID for a whisper message.
      * @param consecutiveMonths number of consecutive months the user has
      * subscribed for in a resub notice.
      * @param bits Amount of Bits user has used.
      * @param msgId Twitch's type of notice
+     * @param sentTs Unix timestamp of a message
+     * @param tmiSentTs Unix timestamp of a message (Again?)
      */
-    private void updateUser(String username, String color, boolean subscriber, boolean turbo, boolean mod, String userType, long id, long roomId, long consecutiveMonths, String emotes, String badges, String messageId, long bits, String emoteSets, String msgId, String systemMsg, String userLogin) {
+    private void updateUser(String username, String color, long subscriber, long turbo, long mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String systemMsg, String userLogin, long sentTs, long tmiSentTs) {
         synchronized (_channels) {
             for (Channel el : _channels.values()) {
                 User user = el.getUser(username);
@@ -3467,8 +3516,12 @@ public abstract class PircBot implements ReplyConstants {
                 user.setEmoteSets(emoteSets);
                 user.setMessageId(messageId);
                 user.setRoomId(roomId);
+                user.setWhisperMsgId(whisperMsgId);
+                user.setWhisperThreadId(whisperThreadId);
                 user.setConsecutiveMonths(consecutiveMonths);
                 user.setBits(bits);
+                user.setSentTs(sentTs);
+                user.setTmiSentTs(tmiSentTs);
             }
         }
     }

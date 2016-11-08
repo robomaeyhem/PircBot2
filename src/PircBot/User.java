@@ -38,8 +38,8 @@ public class User implements Comparable {
     private static String[] bots = {"wow_deku_onehand", "lavasbot", "facts_bot", "totally_not_facts_bot", "23forces", "twitchplaysleaderboard", "recordingbot", "twitchnotify", "io_ol7bot", "tppstatbot", "tppstatsbot", "pikalaxbot", "wowitsbot", "wallbot303", "frunky5", "wow_statsbot_onehand", "tppbankbot", "tppmodbot", "tppinfobot", "kmsbot", "trainertimmybot", "wow_battlebot_onehand", "groudonger"};
     private String previousMessage;
     private String color;
-    private boolean subscriber;
-    private boolean turbo;
+    private long subscriber;
+    private long turbo;
     private String emotes;
     private String msgId;
     private String badges;
@@ -50,9 +50,13 @@ public class User implements Comparable {
     private String messageId;
     private long id;
     private long roomId;
+    private long whisperMsgId;
+    private String whisperThreadId;
     private long consecutiveMonths;
     private long bits;
-    private boolean mod;
+    private long sentTs;
+    private long tmiSentTs;
+    private long mod;
 
     public static boolean isBot(String username) {
         username = username.toLowerCase();
@@ -80,9 +84,9 @@ public class User implements Comparable {
         this.isVoice = false;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = false;
-        this.mod = false;
-        this.turbo = false;
+        this.subscriber = 0;
+        this.mod = 0;
+        this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
         this.badges = "";
@@ -92,8 +96,12 @@ public class User implements Comparable {
         this.userType = "";
         this.id = 0;
         this.roomId = 0;
+        this.whisperMsgId = 0;
+        this.whisperThreadId = "";
         this.consecutiveMonths = 0;
         this.bits = 0;
+        this.sentTs = 0;
+        this.tmiSentTs = 0;
         this.messageId = "";
     }
 
@@ -124,9 +132,9 @@ public class User implements Comparable {
         this.isVoice = false;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = false;
-        this.mod = false;
-        this.turbo = false;
+        this.subscriber = 0;
+        this.mod = 0;
+        this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
         this.badges = "";
@@ -136,8 +144,12 @@ public class User implements Comparable {
         this.userType = "";
         this.id = 0;
         this.roomId = 0;
+        this.whisperMsgId = 0;
+        this.whisperThreadId = "";
         this.consecutiveMonths = 0;
         this.bits = 0;
+        this.sentTs = 0;
+        this.tmiSentTs = 0;
         this.messageId = "";
     }
 
@@ -159,9 +171,9 @@ public class User implements Comparable {
         this.isVoice = false;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = false;
-        this.mod = false;
-        this.turbo = false;
+        this.subscriber = 0;
+        this.mod = 0;
+        this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
         this.badges = "";
@@ -171,8 +183,12 @@ public class User implements Comparable {
         this.userType = "";
         this.id = 0;
         this.roomId = 0;
+        this.whisperMsgId = 0;
+        this.whisperThreadId = "";
         this.consecutiveMonths = 0;
         this.bits = 0;
+        this.sentTs = 0;
+        this.tmiSentTs = 0;
         this.messageId = "";
     }
 
@@ -196,9 +212,9 @@ public class User implements Comparable {
         this._channel = _channel;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = false;
-        this.mod = false;
-        this.turbo = false;
+        this.subscriber = 0;
+        this.mod = 0;
+        this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
         this.badges = "";
@@ -208,8 +224,12 @@ public class User implements Comparable {
         this.userType = "";
         this.id = 0;
         this.roomId = 0;
+        this.whisperMsgId = 0;
+        this.whisperThreadId = "";
         this.consecutiveMonths = 0;
         this.bits = 0;
+        this.sentTs = 0;
+        this.tmiSentTs = 0;
         this.messageId = "";
     }
 
@@ -223,9 +243,9 @@ public class User implements Comparable {
      * @param isOP Is user OP?
      * @param isVoice Is user voiced?
      * @param color Color String of the User
-     * @param isSubscriber Is user a Channel Sub?
-     * @param isMod Is user a Channel Moderator?
-     * @param isTurbo Is user a Turbo user?
+     * @param getSubscriber Amount of months an user has been subscriber to a channel
+     * @param getMod Is user a Channel Moderator?
+     * @param getTurbo Is user a Turbo user?
      * @param emotes Emote String of the User
      * @param msgId Twitch System Message Id https://github.com/justintv/Twitch-API/blob/master/IRC.md#notice
      * @param userType User Type tag info
@@ -235,10 +255,14 @@ public class User implements Comparable {
      * @param emoteSets Get emote sets for USERSTATE lines
      * @param messageId Unique identifier for a message.
      * @param roomId ID of the channel.
+     * @param whisperMsgId ID for a specific Whisper Message
+     * @param whisperThreadId ID for a Whisper Thread, contains Sending User-Id and Receiving User-Id
      * @param consecutiveMonths number of consecutive months the user has subscribed for in a resub notice.
      * @param bits Amount of Bits user has used.
+     * @param sentTs Timestamp of a message.
+     * @param tmiSentTs Timestamp of a message. (Again?)
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean isSubscriber, boolean isMod, boolean isTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String messageId, String emoteSets, String msgId, long roomId, long bits, long consecutiveMonths) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String messageId, String emoteSets, String msgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -248,16 +272,20 @@ public class User implements Comparable {
         this._channel = _channel;
         this.previousMessage = "";
         this.color = color;
-        this.subscriber = isSubscriber;
-        this.mod = isMod;
-        this.turbo = isTurbo;
+        this.subscriber = 0;
+        this.mod = getMod;
+        this.turbo = getTurbo;
         this.emotes = emotes;
         this.msgId = msgId;
         this.userType = userType;
         this.id = 0;
         this.roomId = 0;
+        this.whisperMsgId = 0;
+        this.whisperThreadId = "";
         this.consecutiveMonths = 0;
         this.bits = 0;
+        this.sentTs = 0;
+        this.tmiSentTs = 0;
         this.badges = badges;
         this.systemMsg = systemMsg;
         this.userLogin = userLogin;
@@ -281,16 +309,20 @@ public class User implements Comparable {
         this.isVoice = user.isVoice;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = false;
-        this.mod = false;
-        this.turbo = false;
+        this.subscriber = 0;
+        this.mod = 0;
+        this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
         this.userType = "";
         this.id = 0;
         this.roomId = 0;
+        this.whisperMsgId = 0;
+        this.whisperThreadId = "";
         this.consecutiveMonths = 0;
         this.bits = 0;
+        this.sentTs = 0;
+        this.tmiSentTs = 0;
         this.badges = "";
         this.systemMsg = "";
         this.userLogin = "";
@@ -483,6 +515,42 @@ public class User implements Comparable {
 
 
     /**
+     * Get the twitch message-id tag for a Whisper Message (Twitch Private Messaging systme, if tags are enabled)
+     *
+     * @return whisperMsgId
+     */
+    public long getWhisperMsgId() {
+        return this.whisperMsgId;
+    }
+
+    /**
+     * Set the twitch message-id for a message
+     *
+     * @param whisperMsgId message-id
+     */
+    public void setWhisperMsgId(long whisperMsgId) {
+        this.whisperMsgId = whisperMsgId;
+    }
+
+    /**
+     * Get the twitch thread-id tag for a Whisper Message (Twitch Private Messaging systme, if tags are enabled)
+     *
+     * @return whisperThreadId
+     */
+    public String getWhisperThreadId() {
+        return this.whisperThreadId;
+    }
+
+    /**
+     * Set the twitch thread-id for a message
+     *
+     * @param whisperThreadId thread-id
+     */
+    public void setWhisperThreadId(String whisperThreadId) {
+        this.whisperThreadId = whisperThreadId;
+    }
+
+    /**
      * Get the twitch msg-param-months tag an user in a subscription based channel (if tags are enabled)
      *
      * @return consecutiveMonths
@@ -500,7 +568,6 @@ public class User implements Comparable {
         this.consecutiveMonths = consecutiveMonths;
     }
 
-
     /**
      * Get the twitch bits tag for an user (if tags are enabled)
      *
@@ -517,6 +584,44 @@ public class User implements Comparable {
      */
     public void setBits(long bits) {
         this.bits = bits;
+    }
+
+
+    /**
+     * Get the timestamp for a message (if tags are enabled)
+     *
+     * @return sentTs
+     */
+    public long getSentTs() {
+        return this.sentTs;
+    }
+
+    /**
+     * Set the timestamp of a message
+     *
+     * @param sentTs sent-ts
+     */
+    public void setSentTs(long sentTs) {
+        this.sentTs = sentTs;
+    }
+
+
+    /**
+     * Get the timestamp for a message (if tags are enabled) (Again?)
+     *
+     * @return tmiSentTs
+     */
+    public long getTmiSentTs() {
+        return this.tmiSentTs;
+    }
+
+    /**
+     * Set the timestamp of a message (Again?)
+     *
+     * @param tmiSentTs tmi-sent-ts
+     */
+    public void setTmiSentTs(long tmiSentTs) {
+        this.tmiSentTs = tmiSentTs;
     }
 
 
@@ -584,27 +689,27 @@ public class User implements Comparable {
         this.messageId = messageId;
     }
 
-    public boolean isSubscriber() {
+    public long getSubscriber() {
         return subscriber;
     }
 
-    public void setSubscriber(boolean subscriber) {
+    public void setSubscriber(long subscriber) {
         this.subscriber = subscriber;
     }
 
-    public boolean isMod() {
+    public long getMod() {
         return mod;
     }
 
-    public void setMod(boolean mod) {
+    public void setMod(long mod) {
         this.mod = mod;
     }
 
-    public boolean isTurbo() {
+    public long getTurbo() {
         return turbo;
     }
 
-    public void setTurbo(boolean turbo) {
+    public void setTurbo(long turbo) {
         this.turbo = turbo;
     }
 
