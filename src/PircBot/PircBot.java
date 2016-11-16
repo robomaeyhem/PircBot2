@@ -1779,6 +1779,10 @@ public abstract class PircBot implements ReplyConstants {
     /**
      * Called when a whisper is received to the bot. This is mainly used with
      * Twitch TV.
+     * <p>
+     * Note that you MUST call
+     * <code>sendRawLine("CAP REQ :twitch.tv/commands");</code> in order to
+     * receive whispers.
      *
      * @param sender The user sending the Whisper
      * @param target Who the Whisper is for

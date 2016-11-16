@@ -3,3 +3,4 @@
 nbproject/*
 /src/PircBot/Test.java
 nbproject/private/*
+build.xml
