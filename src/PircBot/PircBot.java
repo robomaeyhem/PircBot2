@@ -1026,13 +1026,20 @@ public abstract class PircBot implements ReplyConstants {
                             r9k = false;
                         }
                         channel.setR9k(r9k);
-                        int slow;
+                        long slow;
                         try {
-                            slow = Integer.parseInt(tags.get("slow"));
+                            slow = Long.parseLong(tags.get("slow"));
                         } catch (Exception ex) {
                             slow = 0;
                         }
                         channel.setSlow(slow);
+                        long followersOnly;
+                        try {
+                            followersOnly = Long.parseLong(tags.get("followers-only"));
+                        } catch (Exception ex) {
+                            followersOnly = -1;
+                        }
+                        channel.setFollowersOnly(followersOnly);
                         boolean subs;
                         try {
                             subs = tags.get("subs-only").equals("1");
@@ -1047,6 +1054,7 @@ public abstract class PircBot implements ReplyConstants {
                             emoteOnly = false;
                         }
                         channel.setEmoteOnly(emoteOnly);
+                        this.onRoomState(channel);
                     }
                 case "USERSTATE":
                     for (String tag : ircTags.split(";")) {
@@ -1074,12 +1082,13 @@ public abstract class PircBot implements ReplyConstants {
                             user.setMod(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("user-type")) {
                             user.setUserType(value);
-                            this.onUserState(user, channel);
+                            //this.onUserState(user, channel);
                         } else if (key.equalsIgnoreCase("emote-sets")) {
                             user.setEmoteSets(value);
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         }
+                        this.onUserState(user, channel);
                     }
                     break;
                 case "GLOBALUSERSTATE":
@@ -1108,12 +1117,13 @@ public abstract class PircBot implements ReplyConstants {
                             user.setMod(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("user-type")) {
                             user.setUserType(value);
-                            this.onGlobalUserState(user);
+                            //this.onGlobalUserState(user);
                         } else if (key.equalsIgnoreCase("emote-sets")) {
                             user.setEmoteSets(value);
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         }
+                        this.onGlobalUserState(user);
                     }
                     break;
                 case "USERNOTICE":
@@ -1163,10 +1173,12 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         } else if (key.equalsIgnoreCase("user-type")) {
-                            String resubMessage = line.split(channel + " ", 2)[1];
+                            //String resubMessage = line.split(channel + " ", 2)[1];
                             user.setUserType(value);
-                            this.onUserNotice(channel, user, resubMessage);
+                            //this.onUserNotice(channel, user, resubMessage);
                         }
+                        String resubMessage = line.split(channel + " ", 2)[1];
+                        this.onUserNotice(channel, user, resubMessage);
                     }
                     break;
                 case "CLEARCHAT":
@@ -2649,6 +2661,20 @@ public abstract class PircBot implements ReplyConstants {
     protected void onUserState(User user, Channel channel) {
 
     }
+
+
+    /**
+     * This method is called whenever a ROOMSTATE line is received from Twitch
+     * TV IRC Servers.
+     * <p>
+     * This is for use with twitch
+     *
+     * @param channel channel name
+     */
+    protected void onRoomState(Channel channel) {
+
+    }
+
 
     /**
      * This method is called whenever a USERNOTICE resubscription line is

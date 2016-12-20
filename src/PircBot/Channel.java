@@ -9,7 +9,7 @@ import java.util.*;
  * @author Michael
  * @created 1/15/2016 @ 7:42am
  */
-//broadcaster-lang=;r9k=0;slow=0;subs-only=0
+//broadcaster-lang=;emote-only=0;followers-only=-1;r9k=0;slow=0;subs-only=0
 public class Channel implements Iterable<User> {
 
     private ConcurrentHashMap<String, User> users;
@@ -18,7 +18,8 @@ public class Channel implements Iterable<User> {
     private String server;
     private String broadcasterLanguage = "";
     private boolean r9k = false;
-    private int slow = 0;
+    private long slow = 0;
+    private long followersOnly = -1;
     private boolean subsOnly = false;
     private boolean emoteOnly = false;
 
@@ -220,19 +221,37 @@ public class Channel implements Iterable<User> {
     /**
      * Returns the status of Slow Mode on the channel.
      *
-     * @return True if Slow Mode > 0, false if Slow Mode = 0.
+     * @return Delay in seconds needed before sending a message to a Twitch channel.
      */
-    public boolean isSlow() {
-        return slow == 0;
+    public long getSlow() {
+        return slow;
     }
 
     /**
      * Sets the slow mode for the channel.
      *
-     * @param slow Integer for number of seconds between messages.
+     * @param slow Long Integer for number of seconds between messages.
      */
-    public void setSlow(int slow) {
+    public void setSlow(long slow) {
         this.slow = slow;
+    }
+
+    /**
+     * Returns the status of Followers Only on the channel.
+     *
+     * @return Time in minutes needed to be a follower before sending a message to a channel.
+     */
+    public long getFollowersOnly() {
+        return followersOnly;
+    }
+
+    /**
+     * Sets the slow mode for the channel.
+     *
+     * @param followersOnly Long Integer for number of minutes needed to be a follower before sending a message to a channel.
+     */
+    public void setFollowersOnly(long followersOnly) {
+        this.followersOnly = followersOnly;
     }
 
     /**
