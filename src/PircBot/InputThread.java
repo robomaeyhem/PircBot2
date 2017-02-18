@@ -162,6 +162,6 @@ public class InputThread extends Thread {
     private boolean _isConnected = true;
     private boolean _disposed = false;
     
-    public static int MAX_LINE_LENGTH = 512;
+    public static int MAX_LINE_LENGTH = 1024;
     
 }

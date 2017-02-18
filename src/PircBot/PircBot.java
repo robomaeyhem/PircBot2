@@ -1054,8 +1054,9 @@ public abstract class PircBot implements ReplyConstants {
                             emoteOnly = false;
                         }
                         channel.setEmoteOnly(emoteOnly);
-                        this.onRoomState(channel);
+                        
                     }
+                    this.onRoomState(channel);
                 case "USERSTATE":
                     for (String tag : ircTags.split(";")) {
                         String[] kv = tag.split("=");
@@ -1088,8 +1089,9 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         }
-                        this.onUserState(user, channel);
+                        
                     }
+                    this.onUserState(user, channel);
                     break;
                 case "GLOBALUSERSTATE":
                     for (String tag : ircTags.split(";")) {
@@ -1123,8 +1125,9 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         }
-                        this.onGlobalUserState(user);
+                        
                     }
+                    this.onGlobalUserState(user);
                     break;
                 case "USERNOTICE":
                     for (String tag : ircTags.split(";")) {
@@ -1177,9 +1180,11 @@ public abstract class PircBot implements ReplyConstants {
                             user.setUserType(value);
                             //this.onUserNotice(channel, user, resubMessage);
                         }
-                        String resubMessage = line.split(channel + " ", 2)[1];
-                        this.onUserNotice(channel, user, resubMessage);
+                        
+                        
                     }
+                    String resubMessage = line.split(channel + " ", 2)[1];
+                    this.onUserNotice(channel, user, resubMessage);
                     break;
                 case "CLEARCHAT":
                     for (String tag : ircTags.split(";")) {
@@ -1423,7 +1428,9 @@ public abstract class PircBot implements ReplyConstants {
             } else { // User was timed out
                 try {
                     int duration = (tags.get("ban-duration") == null || tags.get("ban-duration").isEmpty() ? -1 : Integer.parseInt(tags.get("ban-duration")));
-                    this.onUserTimedOut(ch.getUser(l[1].substring(1)), ch, duration, tags.get("ban-reason"));
+                    long roomId = (tags.get("room-id") == null || tags.get("room-id").isEmpty() ? -1 : Long.parseLong(tags.get("room-id")));
+                    long targetUserId = (tags.get("target-user-id") == null || tags.get("target-user-id").isEmpty() ? -1 : Long.parseLong(tags.get("target-user-id")));
+                    this.onUserTimedOut(ch.getUser(l[1].substring(1)), ch, duration, roomId, targetUserId, tags.get("ban-reason"));
                 } catch (NullPointerException npe) {
                 }
             }
@@ -2643,9 +2650,11 @@ public abstract class PircBot implements ReplyConstants {
      * @param channel the channel where user was timed out
      * @param duration Duration user was timed out for. If duration is -1, the
      * ban is permanent.
+     * @param roomId ID of the channel where the user was timed out
+     * @param targetUserId ID of the user who was timed out
      * @param reason Reason user was timed out.
      */
-    protected void onUserTimedOut(User user, Channel channel, int duration, String reason) {
+    protected void onUserTimedOut(User user, Channel channel, int duration, long roomId, long targetUserId, String reason) {
 
     }
 
