@@ -986,8 +986,14 @@ public abstract class PircBot implements ReplyConstants {
         if (target.contains("USERNOTICE") && line.contains("#")) {
             channel = _channels.get("#" + line.split("#", 2)[1]); //Get USERNOTICE Line
         }
+        if (target.contains("NOTICE") && line.contains("#")) {
+            channel = _channels.get("#" + line.split("#", 2)[1].split(" ", 2)[0]); //Get NOTICE Line
+        }
+        if (target.contains("RECONNECT") && line.contains("#")) {
+            // https://dev.twitch.tv/docs/v5/guides/irc/#reconnect-twitch-commands
+        }
         if (target.contains("GLOBALUSERSTATE")) {
-            // Does GLOBALUSERSTATE still work? Twitch API documentation is really bad, and I can't see it working on my end. https://github.com/justintv/Twitch-API/blob/master/IRC.md#globaluserstate
+            // https://dev.twitch.tv/docs/v5/guides/irc/#globaluserstate-twitch-tags
             // channel = _channels.get("#" + line.split("#", 2)[1]);
         }
         if (target.startsWith("#")) {
@@ -1006,6 +1012,20 @@ public abstract class PircBot implements ReplyConstants {
         if (containsIRC3) {
             switch (command) {
                 case "NOTICE":
+                    for (String tag : ircTags.split(";")) {
+                        String[] kv = tag.split("=");
+                        String key = kv[0];
+                        String value;
+                        if (kv.length == 1) {
+                            value = "";
+                        } else {
+                            value = kv[1];
+                        }
+                        tags.put(key, value);
+                        if (key.equalsIgnoreCase("msg-id")) {
+                            user.setSystemMsgId(value);
+                        }
+                    }
                     break;
                 case "ROOMSTATE":
                     for (String tag : ircTags.split(";")) {
@@ -1054,7 +1074,7 @@ public abstract class PircBot implements ReplyConstants {
                             emoteOnly = false;
                         }
                         channel.setEmoteOnly(emoteOnly);
-                        
+
                     }
                     this.onRoomState(channel);
                 case "USERSTATE":
@@ -1089,7 +1109,6 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         }
-                        
                     }
                     this.onUserState(user, channel);
                     break;
@@ -1125,7 +1144,7 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         }
-                        
+
                     }
                     this.onGlobalUserState(user);
                     break;
@@ -1164,6 +1183,12 @@ public abstract class PircBot implements ReplyConstants {
                             user.setSystemMsg(value);
                         } else if (key.equalsIgnoreCase("login")) {
                             user.setUserLogin(value);
+                        } else if (key.equalsIgnoreCase("user")) {
+                            user.setSubUser(value);
+                        } else if (key.equalsIgnoreCase("msg-param-sub-plan")) {
+                            user.setSubPlan(value);
+                        } else if (key.equalsIgnoreCase("msg-param-sub-plan-name")) {
+                            user.setSubName(value);
                         } else if (key.equalsIgnoreCase("subscriber")) {
                             //user.setSubscriber(value.equals(value));
                             user.setSubscriber(Long.parseLong(value));
@@ -1176,12 +1201,8 @@ public abstract class PircBot implements ReplyConstants {
                         } else if (key.equalsIgnoreCase("badges")) {
                             user.setBadges(value);
                         } else if (key.equalsIgnoreCase("user-type")) {
-                            //String resubMessage = line.split(channel + " ", 2)[1];
                             user.setUserType(value);
-                            //this.onUserNotice(channel, user, resubMessage);
                         }
-                        
-                        
                     }
                     String resubMessage = line.split(channel + " ", 2)[1];
                     this.onUserNotice(channel, user, resubMessage);
@@ -1312,7 +1333,7 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         mod = -1;
                     }
-                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), sentTs, tmiSentTs);
+                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs);
                     break;
             }
         }
@@ -1390,7 +1411,11 @@ public abstract class PircBot implements ReplyConstants {
             this.onNickChange(sourceNick, sourceLogin, sourceHostname, newNick, user);
         } else if (command.equals("NOTICE")) {
             // Someone is sending a notice.
-            this.onNotice(user, target, line.substring(line.indexOf(" :") + 2));
+            channel = _channels.get("#" + line.split("#", 2)[1].split(" ", 2)[0]);
+            this.onNotice(channel, user, target, line.substring(line.indexOf(" :") + 2));
+        } else if (command.equals("RECONNECT")) {
+            // Twitch.tv has sent a RECONNECT request. https://dev.twitch.tv/docs/v5/guides/irc/#reconnect-twitch-commands
+            this.onReconnect();
         } else if (command.equals("QUIT")) {
             // Someone has quit from the IRC server.
             if (sourceNick.equals(this.getNick())) {
@@ -1678,11 +1703,23 @@ public abstract class PircBot implements ReplyConstants {
      * The implementation of this method in the PircBot abstract class performs
      * no actions and may be overridden as required.
      *
+     * @param channel The channel the notice was sent to.
      * @param sender The nick of the user that sent the notice.
      * @param target The target of the notice, be it our nick or a channel name.
      * @param notice The notice message.
      */
-    protected void onNotice(User sender, String target, String notice) {
+    protected void onNotice(Channel channel, User sender, String target, String notice) {
+    }
+
+    /**
+     * This method is called whenever Twitch sends a RECONNECT line.
+     * https://dev.twitch.tv/docs/v5/guides/irc/#reconnect-twitch-commands
+     * <p>
+     * The implementation of this method in the PircBot abstract class performs
+     * no actions and may be overridden as required.
+     *
+     */
+    protected void onReconnect() {
     }
 
     /**
@@ -2671,7 +2708,6 @@ public abstract class PircBot implements ReplyConstants {
 
     }
 
-
     /**
      * This method is called whenever a ROOMSTATE line is received from Twitch
      * TV IRC Servers.
@@ -2683,7 +2719,6 @@ public abstract class PircBot implements ReplyConstants {
     protected void onRoomState(Channel channel) {
 
     }
-
 
     /**
      * This method is called whenever a USERNOTICE resubscription line is
@@ -3523,6 +3558,13 @@ public abstract class PircBot implements ReplyConstants {
      * @param whisperThreadId Whisper Thread-id string
      * @param systemMsg Resubscription System string
      * @param userLogin Lowercase username name
+     * @param subUser Lowercase username name
+     * @param subPlan Subscription plan (The type of subscription plan being
+     * used. Valid values: Prime, 1000, 2000, 3000. 1000, 2000, and 3000 refer
+     * to the first, second, and third levels of paid subscriptions,
+     * respectively (currently $4.99, $9.99, and $24.99).)
+     * @param subName Subscription name (The display name of the subscription
+     * plan. This may be a default name or one created by the channel owner.)
      * @param emoteSets Emoticon Sets string
      * @param messageId Unique identifier for a message.
      * @param roomId ID of the channel.
@@ -3531,10 +3573,11 @@ public abstract class PircBot implements ReplyConstants {
      * subscribed for in a resub notice.
      * @param bits Amount of Bits user has used.
      * @param msgId Twitch's type of notice
+     * @param systemMsgId Twitch's Notice Message ID
      * @param sentTs Unix timestamp of a message
      * @param tmiSentTs Unix timestamp of a message (Again?)
      */
-    private void updateUser(String username, String color, long subscriber, long turbo, long mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String systemMsg, String userLogin, long sentTs, long tmiSentTs) {
+    private void updateUser(String username, String color, long subscriber, long turbo, long mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs) {
         synchronized (_channels) {
             for (Channel el : _channels.values()) {
                 User user = el.getUser(username);
@@ -3549,9 +3592,13 @@ public abstract class PircBot implements ReplyConstants {
                 user.setId(id);
                 user.setEmotes(emotes);
                 user.setMsgId(msgId);
+                user.setSystemMsgId(sytemMsgId);
                 user.setBadges(badges);
                 user.setSystemMsg(systemMsg);
                 user.setUserLogin(userLogin);
+                user.setSubUser(subUser);
+                user.setSubPlan(subPlan);
+                user.setSubName(subName);
                 user.setEmoteSets(emoteSets);
                 user.setMessageId(messageId);
                 user.setRoomId(roomId);

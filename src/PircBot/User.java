@@ -42,9 +42,13 @@ public class User implements Comparable {
     private long turbo;
     private String emotes;
     private String msgId;
+    private String systemMsgId;
     private String badges;
     private String systemMsg;
     private String userLogin;
+    private String subUser;
+    private String subPlan;
+    private String subName;
     private String emoteSets;
     private String userType;
     private String messageId;
@@ -89,9 +93,13 @@ public class User implements Comparable {
         this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
+        this.systemMsgId = "";
         this.badges = "";
         this.systemMsg = "";
         this.userLogin = "";
+        this.subUser = "";
+        this.subPlan = "";
+        this.subName = "";
         this.emoteSets = "";
         this.userType = "";
         this.id = 0;
@@ -137,9 +145,13 @@ public class User implements Comparable {
         this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
+        this.systemMsgId = "";
         this.badges = "";
         this.systemMsg = "";
         this.userLogin = "";
+        this.subUser = "";
+        this.subPlan = "";
+        this.subName = "";
         this.emoteSets = "";
         this.userType = "";
         this.id = 0;
@@ -176,9 +188,13 @@ public class User implements Comparable {
         this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
+        this.systemMsgId = "";
         this.badges = "";
         this.systemMsg = "";
         this.userLogin = "";
+        this.subUser = "";
+        this.subPlan = "";
+        this.subName = "";
         this.emoteSets = "";
         this.userType = "";
         this.id = 0;
@@ -217,9 +233,13 @@ public class User implements Comparable {
         this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
+        this.systemMsgId = "";
         this.badges = "";
         this.systemMsg = "";
         this.userLogin = "";
+        this.subUser = "";
+        this.subPlan = "";
+        this.subName = "";
         this.emoteSets = "";
         this.userType = "";
         this.id = 0;
@@ -247,11 +267,15 @@ public class User implements Comparable {
      * @param getMod Is user a Channel Moderator?
      * @param getTurbo Is user a Turbo user?
      * @param emotes Emote String of the User
-     * @param msgId Twitch System Message Id https://github.com/justintv/Twitch-API/blob/master/IRC.md#notice
+     * @param msgId Twitch System Message Id https://dev.twitch.tv/docs/v5/guides/irc/#notice-twitch-commands
+     * @param systemMsgId Twitch System Message Id https://dev.twitch.tv/docs/v5/guides/irc/#notice-twitch-commands
      * @param userType User Type tag info
      * @param badges Get chat icons such as moderator, turbo, subscriber, bits
      * @param systemMsg Resubscription System Message
      * @param userLogin Username lowercase name for resubscription lines
+     * @param subUser Username lowercase name for resubscription lines
+     * @param subPlan Username lowercase name for resubscription lines (Subscription Plan Value)
+     * @param subName Username lowercase name for resubscription lines (Subscription Plan Name)
      * @param emoteSets Get emote sets for USERSTATE lines
      * @param messageId Unique identifier for a message.
      * @param roomId ID of the channel.
@@ -262,7 +286,7 @@ public class User implements Comparable {
      * @param sentTs Timestamp of a message.
      * @param tmiSentTs Timestamp of a message. (Again?)
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String messageId, String emoteSets, String msgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -277,6 +301,7 @@ public class User implements Comparable {
         this.turbo = getTurbo;
         this.emotes = emotes;
         this.msgId = msgId;
+        this.systemMsgId = systemMsgId;
         this.userType = userType;
         this.id = 0;
         this.roomId = 0;
@@ -289,6 +314,9 @@ public class User implements Comparable {
         this.badges = badges;
         this.systemMsg = systemMsg;
         this.userLogin = userLogin;
+        this.subUser = subUser;
+        this.subPlan = subPlan;
+        this.subName = subName;
         this.emoteSets = emoteSets;
         this.messageId = messageId;
     }
@@ -314,6 +342,7 @@ public class User implements Comparable {
         this.turbo = 0;
         this.emotes = "";
         this.msgId = "";
+        this.systemMsgId = "";
         this.userType = "";
         this.id = 0;
         this.roomId = 0;
@@ -326,6 +355,9 @@ public class User implements Comparable {
         this.badges = "";
         this.systemMsg = "";
         this.userLogin = "";
+        this.subUser = "";
+        this.subPlan = "";
+        this.subName = "";
         this.emoteSets = "";
         this.messageId = "";
     }
@@ -649,6 +681,14 @@ public class User implements Comparable {
         this.msgId = msgId;
     }
 
+    public String getSystemMsgId() {
+        return systemMsgId;
+    }
+
+    public void setSystemMsgId(String systemMsgId) {
+        this.systemMsgId = systemMsgId;
+    }
+
     public String getBadges() {
         return badges;
     }
@@ -671,6 +711,30 @@ public class User implements Comparable {
 
     public void setUserLogin(String userLogin) {
         this.userLogin = userLogin;
+    }
+
+    public String getSubUser() {
+        return subUser;
+    }
+
+    public void setSubUser(String subUser) {
+        this.subUser = subUser;
+    }
+
+    public String getSubPlan() {
+        return subPlan;
+    }
+
+    public void setSubPlan(String subPlan) {
+        this.subPlan = subPlan;
+    }
+
+    public String getSubName() {
+        return subName;
+    }
+
+    public void setSubName(String subName) {
+        this.subName = subName;
     }
 
     public String getEmoteSets() {
