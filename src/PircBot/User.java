@@ -40,6 +40,7 @@ public class User implements Comparable {
     private String color;
     private long subscriber;
     private long turbo;
+    private long targetUserId;
     private String emotes;
     private String msgId;
     private String systemMsgId;
@@ -91,6 +92,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.turbo = 0;
+        this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
         this.systemMsgId = "";
@@ -143,6 +145,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.turbo = 0;
+        this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
         this.systemMsgId = "";
@@ -186,6 +189,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.turbo = 0;
+        this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
         this.systemMsgId = "";
@@ -231,6 +235,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.turbo = 0;
+        this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
         this.systemMsgId = "";
@@ -266,6 +271,7 @@ public class User implements Comparable {
      * @param getSubscriber Amount of months an user has been subscriber to a channel
      * @param getMod Is user a Channel Moderator?
      * @param getTurbo Is user a Turbo user?
+     * @param getTargetUserId target-user-id used for Timeouts and NOTICEs
      * @param emotes Emote String of the User
      * @param msgId Twitch System Message Id https://dev.twitch.tv/docs/v5/guides/irc/#notice-twitch-commands
      * @param systemMsgId Twitch System Message Id https://dev.twitch.tv/docs/v5/guides/irc/#notice-twitch-commands
@@ -286,7 +292,7 @@ public class User implements Comparable {
      * @param sentTs Timestamp of a message.
      * @param tmiSentTs Timestamp of a message. (Again?)
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -299,6 +305,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = getMod;
         this.turbo = getTurbo;
+        this.targetUserId = getTargetUserId;
         this.emotes = emotes;
         this.msgId = msgId;
         this.systemMsgId = systemMsgId;
@@ -340,6 +347,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.turbo = 0;
+        this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
         this.systemMsgId = "";
@@ -775,6 +783,14 @@ public class User implements Comparable {
 
     public void setTurbo(long turbo) {
         this.turbo = turbo;
+    }
+
+    public long getTargetUserId() {
+        return targetUserId;
+    }
+
+    public void setTargetUserId(long targetUserId) {
+        this.targetUserId = targetUserId;
     }
 
     public String getUserType() {

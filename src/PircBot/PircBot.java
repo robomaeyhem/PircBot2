@@ -1025,6 +1025,9 @@ public abstract class PircBot implements ReplyConstants {
                         if (key.equalsIgnoreCase("msg-id")) {
                             user.setSystemMsgId(value);
                         }
+                        if (key.equalsIgnoreCase("target-user-id")) {
+                            user.setTargetUserId(Long.parseLong(value));
+                        }
                     }
                     break;
                 case "ROOMSTATE":
@@ -1326,6 +1329,12 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         turbo = -1;
                     }
+                    long targetUserId;
+                    try {
+                        targetUserId = Long.parseLong(tags.get("target-user-id"));
+                    } catch (Exception ex) {
+                        targetUserId = -1;
+                    }
                     long mod;
                     try {
                         //mod = tags.get("mod").equals("1");
@@ -1333,7 +1342,7 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         mod = -1;
                     }
-                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs);
+                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs, targetUserId);
                     break;
             }
         }
@@ -3551,6 +3560,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param color User color info
      * @param subscriber User subscriber
      * @param turbo User turbo
+     * @param targetUserId Used in some NOTICE lines on Twitch.tv
      * @param mod User moderator
      * @param userType Usertype
      * @param emotes emote String
@@ -3577,7 +3587,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param sentTs Unix timestamp of a message
      * @param tmiSentTs Unix timestamp of a message (Again?)
      */
-    private void updateUser(String username, String color, long subscriber, long turbo, long mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs) {
+    private void updateUser(String username, String color, long subscriber, long turbo, long mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs, long targetUserId) {
         synchronized (_channels) {
             for (Channel el : _channels.values()) {
                 User user = el.getUser(username);
@@ -3587,6 +3597,7 @@ public abstract class PircBot implements ReplyConstants {
                 user.setColor(color);
                 user.setSubscriber(subscriber);
                 user.setTurbo(turbo);
+                user.setTargetUserId(targetUserId);
                 user.setMod(mod);
                 user.setUserType(userType);
                 user.setId(id);
