@@ -1207,7 +1207,12 @@ public abstract class PircBot implements ReplyConstants {
                             user.setUserType(value);
                         }
                     }
-                    String resubMessage = line.split(channel + " ", 2)[1];
+                    String resubMessage = "";
+                    try {
+                        resubMessage = line.split(channel + " ", 2)[1];
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        resubMessage = "";
+                    }
                     this.onUserNotice(channel, user, resubMessage);
                     break;
                 case "CLEARCHAT":
