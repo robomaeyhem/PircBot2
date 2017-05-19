@@ -62,6 +62,7 @@ public class User implements Comparable {
     private long sentTs;
     private long tmiSentTs;
     private long mod;
+    private boolean noisy;
 
     public static boolean isBot(String username) {
         username = username.toLowerCase();
@@ -91,6 +92,7 @@ public class User implements Comparable {
         this.color = "";
         this.subscriber = 0;
         this.mod = 0;
+        this.noisy = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -144,6 +146,7 @@ public class User implements Comparable {
         this.color = "";
         this.subscriber = 0;
         this.mod = 0;
+        this.noisy = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -188,6 +191,7 @@ public class User implements Comparable {
         this.color = "";
         this.subscriber = 0;
         this.mod = 0;
+        this.noisy = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -234,6 +238,7 @@ public class User implements Comparable {
         this.color = "";
         this.subscriber = 0;
         this.mod = 0;
+        this.noisy = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -268,31 +273,39 @@ public class User implements Comparable {
      * @param isOP Is user OP?
      * @param isVoice Is user voiced?
      * @param color Color String of the User
-     * @param getSubscriber Amount of months an user has been subscriber to a channel
+     * @param getSubscriber Amount of months an user has been subscriber to a
+     * channel
      * @param getMod Is user a Channel Moderator?
+     * @param noisy If a message is detected as spam by Twitch.TV IRCv3 tags
      * @param getTurbo Is user a Turbo user?
      * @param getTargetUserId target-user-id used for Timeouts and NOTICEs
      * @param emotes Emote String of the User
-     * @param msgId Twitch System Message Id https://dev.twitch.tv/docs/v5/guides/irc/#notice-twitch-commands
-     * @param systemMsgId Twitch System Message Id https://dev.twitch.tv/docs/v5/guides/irc/#notice-twitch-commands
+     * @param msgId Twitch System Message Id
+     * https://dev.twitch.tv/docs/v5/guides/irc/#notice-twitch-commands
+     * @param systemMsgId Twitch System Message Id
+     * https://dev.twitch.tv/docs/v5/guides/irc/#notice-twitch-commands
      * @param userType User Type tag info
      * @param badges Get chat icons such as moderator, turbo, subscriber, bits
      * @param systemMsg Resubscription System Message
      * @param userLogin Username lowercase name for resubscription lines
      * @param subUser Username lowercase name for resubscription lines
-     * @param subPlan Username lowercase name for resubscription lines (Subscription Plan Value)
-     * @param subName Username lowercase name for resubscription lines (Subscription Plan Name)
+     * @param subPlan Username lowercase name for resubscription lines
+     * (Subscription Plan Value)
+     * @param subName Username lowercase name for resubscription lines
+     * (Subscription Plan Name)
      * @param emoteSets Get emote sets for USERSTATE lines
      * @param messageId Unique identifier for a message.
      * @param roomId ID of the channel.
      * @param whisperMsgId ID for a specific Whisper Message
-     * @param whisperThreadId ID for a Whisper Thread, contains Sending User-Id and Receiving User-Id
-     * @param consecutiveMonths number of consecutive months the user has subscribed for in a resub notice.
+     * @param whisperThreadId ID for a Whisper Thread, contains Sending User-Id
+     * and Receiving User-Id
+     * @param consecutiveMonths number of consecutive months the user has
+     * subscribed for in a resub notice.
      * @param bits Amount of Bits user has used.
      * @param sentTs Timestamp of a message.
      * @param tmiSentTs Timestamp of a message. (Again?)
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, boolean noisy, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -304,6 +317,7 @@ public class User implements Comparable {
         this.color = color;
         this.subscriber = 0;
         this.mod = getMod;
+        this.noisy = noisy;
         this.turbo = getTurbo;
         this.targetUserId = getTargetUserId;
         this.emotes = emotes;
@@ -346,6 +360,7 @@ public class User implements Comparable {
         this.color = "";
         this.subscriber = 0;
         this.mod = 0;
+        this.noisy = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -378,20 +393,25 @@ public class User implements Comparable {
     public void changeName(String name) {
         _nick = name;
     }
+
     /**
      * Sets the user's Display Name.
+     *
      * @param name New Display Name for the user
      */
-    public void setDisplayName(String name){
+    public void setDisplayName(String name) {
         displayName = name;
     }
+
     /**
      * Returns the current Display name for the user.
+     *
      * @return String containing the display name for the user.
      */
-    public String getDisplayName(){
+    public String getDisplayName() {
         return displayName;
     }
+
     /**
      * Returns the current channel of the user
      *
@@ -553,9 +573,9 @@ public class User implements Comparable {
         this.roomId = roomId;
     }
 
-
     /**
-     * Get the twitch message-id tag for a Whisper Message (Twitch Private Messaging systme, if tags are enabled)
+     * Get the twitch message-id tag for a Whisper Message (Twitch Private
+     * Messaging systme, if tags are enabled)
      *
      * @return whisperMsgId
      */
@@ -573,7 +593,8 @@ public class User implements Comparable {
     }
 
     /**
-     * Get the twitch thread-id tag for a Whisper Message (Twitch Private Messaging systme, if tags are enabled)
+     * Get the twitch thread-id tag for a Whisper Message (Twitch Private
+     * Messaging systme, if tags are enabled)
      *
      * @return whisperThreadId
      */
@@ -591,7 +612,8 @@ public class User implements Comparable {
     }
 
     /**
-     * Get the twitch msg-param-months tag an user in a subscription based channel (if tags are enabled)
+     * Get the twitch msg-param-months tag an user in a subscription based
+     * channel (if tags are enabled)
      *
      * @return consecutiveMonths
      */
@@ -626,7 +648,6 @@ public class User implements Comparable {
         this.bits = bits;
     }
 
-
     /**
      * Get the timestamp for a message (if tags are enabled)
      *
@@ -645,7 +666,6 @@ public class User implements Comparable {
         this.sentTs = sentTs;
     }
 
-
     /**
      * Get the timestamp for a message (if tags are enabled) (Again?)
      *
@@ -663,7 +683,6 @@ public class User implements Comparable {
     public void setTmiSentTs(long tmiSentTs) {
         this.tmiSentTs = tmiSentTs;
     }
-
 
     public String getColor() {
         return color;
@@ -775,6 +794,24 @@ public class User implements Comparable {
 
     public void setMod(long mod) {
         this.mod = mod;
+    }
+
+    /**
+     * Checks if a message sent by an user is spam.
+     *
+     * @return True if a message is spam, false if not
+     */
+    public boolean getNoisy() {
+        return noisy;
+    }
+
+    /**
+     * Sets the Spam status of a message.
+     *
+     * @param noisy Noisy status
+     */
+    public void setNoisy(boolean noisy) {
+        this.noisy = noisy;
     }
 
     public long getTurbo() {
