@@ -517,7 +517,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param message Message to send to the target.
      */
     public void sendWhisper(String target, String message) {
-        String channel = "#jtv";
+        String channel = "#twitch";
         _outQueue.add("PRIVMSG " + channel + " :/w " + target + " " + message);
     }
 
