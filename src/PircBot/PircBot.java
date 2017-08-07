@@ -1056,6 +1056,21 @@ public abstract class PircBot implements ReplyConstants {
                             slow = 0;
                         }
                         channel.setSlow(slow);
+                        //  No clue what Mercury is, this tag in undocumented
+                        long mercury;
+                        try {
+                            mercury = Long.parseLong(tags.get("mercury"));
+                        } catch (Exception ex) {
+                            mercury = 0;
+                        }
+                        channel.setMercury(mercury);
+                        long roomId;
+                        try {
+                            roomId = Long.parseLong(tags.get("room-id"));
+                        } catch (Exception ex) {
+                            roomId = 0;
+                        }
+                        channel.setRoomId(roomId);
                         long followersOnly;
                         try {
                             followersOnly = Long.parseLong(tags.get("followers-only"));

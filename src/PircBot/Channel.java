@@ -20,6 +20,8 @@ public class Channel implements Iterable<User> {
     private boolean r9k = false;
     private long slow = 0;
     private long followersOnly = -1;
+    private long mercury = -1;
+    private long roomId = -1;
     private boolean subsOnly = false;
     private boolean emoteOnly = false;
 
@@ -252,6 +254,42 @@ public class Channel implements Iterable<User> {
      */
     public void setFollowersOnly(long followersOnly) {
         this.followersOnly = followersOnly;
+    }
+
+    /**
+     * Returns the Room ID for a channel
+     *
+     * @return Long integer of Room ID for a Twitch Channel
+     */
+    public long getRoomId() {
+        return roomId;
+    }
+
+    /**
+     * Sets the Room ID for the channel.
+     *
+     * @param roomId Long Integer for Room ID.
+     */
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
+
+    /**
+     * UNDOCUMENTED
+     *
+     * @return Undocumented
+     */
+    public long getMercury() {
+        return mercury;
+    }
+
+    /**
+     * UNDOCUMENTED
+     *
+     * @param mercury Undocumented
+     */
+    public void setMercury(long mercury) {
+        this.mercury = mercury;
     }
 
     /**
