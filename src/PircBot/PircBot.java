@@ -1268,6 +1268,8 @@ public abstract class PircBot implements ReplyConstants {
                             user.setTurbo(Long.parseLong(value));
                         } else if (key.equalsIgnoreCase("noisy")) {
                             user.setNoisy(value.equals("1"));
+                        } else if (key.equalsIgnoreCase("emote-only")) {
+                            user.setEmoteOnly(value.equals("1"));
                         } else if (key.equalsIgnoreCase("mod")) {
                             //user.setMod(value.equals("1"));
                             user.setMod(Long.parseLong(value));
@@ -1302,6 +1304,13 @@ public abstract class PircBot implements ReplyConstants {
                         noisy = false;
                     }
                     user.setNoisy(noisy);
+                    boolean emoteOnly;
+                    try {
+                        emoteOnly = tags.get("emote-only").equals("1");
+                    } catch (Exception ex) {
+                        emoteOnly = false;
+                    }
+                    user.setEmoteOnly(emoteOnly);
                     long userID;
                     try {
                         userID = Long.parseLong(tags.get("user-id"));
@@ -1371,7 +1380,7 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         mod = -1;
                     }
-                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, noisy, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs, targetUserId);
+                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, noisy, emoteOnly, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs, targetUserId);
                     break;
             }
         }
@@ -3592,6 +3601,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param targetUserId Used in some NOTICE lines on Twitch.tv
      * @param mod User moderator
      * @param noisy If a message is detected as spam by Twitch.tv IRCv3 tags
+     * @param emoteOnly If a message is contains only emotes, as detected by Twitch.tv IRCv3 tags
      * @param userType Usertype
      * @param emotes emote String
      * @param badges Badges string
@@ -3617,7 +3627,7 @@ public abstract class PircBot implements ReplyConstants {
      * @param sentTs Unix timestamp of a message
      * @param tmiSentTs Unix timestamp of a message (Again?)
      */
-    private void updateUser(String username, String color, long subscriber, long turbo, boolean noisy, long mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs, long targetUserId) {
+    private void updateUser(String username, String color, long subscriber, long turbo, boolean noisy, boolean emoteOnly, long mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs, long targetUserId) {
         synchronized (_channels) {
             for (Channel el : _channels.values()) {
                 User user = el.getUser(username);
@@ -3629,6 +3639,7 @@ public abstract class PircBot implements ReplyConstants {
                 user.setTurbo(turbo);
                 user.setTargetUserId(targetUserId);
                 user.setNoisy(noisy);
+                user.setEmoteOnly(emoteOnly);
                 user.setMod(mod);
                 user.setUserType(userType);
                 user.setId(id);

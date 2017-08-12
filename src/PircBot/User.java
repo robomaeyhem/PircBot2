@@ -63,6 +63,7 @@ public class User implements Comparable {
     private long tmiSentTs;
     private long mod;
     private boolean noisy;
+    private boolean emoteOnly;
 
     public static boolean isBot(String username) {
         username = username.toLowerCase();
@@ -93,6 +94,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.noisy = false;
+        this.emoteOnly = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -147,6 +149,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.noisy = false;
+        this.emoteOnly = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -192,6 +195,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.noisy = false;
+        this.emoteOnly = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -239,6 +243,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.noisy = false;
+        this.emoteOnly = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -277,6 +282,7 @@ public class User implements Comparable {
      * channel
      * @param getMod Is user a Channel Moderator?
      * @param noisy If a message is detected as spam by Twitch.TV IRCv3 tags
+     * @param emoteOnly If a message is contains only emotes, as detected by Twitch.tv IRCv3 tags
      * @param getTurbo Is user a Turbo user?
      * @param getTargetUserId target-user-id used for Timeouts and NOTICEs
      * @param emotes Emote String of the User
@@ -305,7 +311,7 @@ public class User implements Comparable {
      * @param sentTs Timestamp of a message.
      * @param tmiSentTs Timestamp of a message. (Again?)
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, boolean noisy, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, boolean noisy, boolean emoteOnly, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -318,6 +324,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = getMod;
         this.noisy = noisy;
+        this.emoteOnly = emoteOnly;
         this.turbo = getTurbo;
         this.targetUserId = getTargetUserId;
         this.emotes = emotes;
@@ -361,6 +368,7 @@ public class User implements Comparable {
         this.subscriber = 0;
         this.mod = 0;
         this.noisy = false;
+        this.emoteOnly = false;
         this.turbo = 0;
         this.targetUserId = 0;
         this.emotes = "";
@@ -812,6 +820,24 @@ public class User implements Comparable {
      */
     public void setNoisy(boolean noisy) {
         this.noisy = noisy;
+    }
+
+    /**
+     * Checks if a message sent by an user contains only emotes.
+     *
+     * @return True if a message contains only emotes, false if not
+     */
+    public boolean getEmoteOnly() {
+        return emoteOnly;
+    }
+
+    /**
+     * Sets the emoteOnly status of a message.
+     *
+     * @param emoteOnly emoteOnly status
+     */
+    public void setEmoteOnly(boolean emoteOnly) {
+        this.emoteOnly = emoteOnly;
     }
 
     public long getTurbo() {
