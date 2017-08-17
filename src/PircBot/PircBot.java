@@ -1220,6 +1220,10 @@ public abstract class PircBot implements ReplyConstants {
                             user.setBadges(value);
                         } else if (key.equalsIgnoreCase("user-type")) {
                             user.setUserType(value);
+                        } else if (key.equalsIgnoreCase("id")) {
+                            user.setMessageId(value);
+                        } else if (key.equalsIgnoreCase("tmi-sent-ts")) {
+                            user.setTmiSentTs(Long.parseLong(value));
                         }
                     }
                     String resubMessage = "";
@@ -1499,10 +1503,11 @@ public abstract class PircBot implements ReplyConstants {
                 this.onChatCleared(ch);
             } else { // User was timed out
                 try {
-                    int duration = (tags.get("ban-duration") == null || tags.get("ban-duration").isEmpty() ? -1 : Integer.parseInt(tags.get("ban-duration")));
+                    long duration = (tags.get("ban-duration") == null || tags.get("ban-duration").isEmpty() ? -1 : Long.parseLong(tags.get("ban-duration")));
                     long roomId = (tags.get("room-id") == null || tags.get("room-id").isEmpty() ? -1 : Long.parseLong(tags.get("room-id")));
                     long targetUserId = (tags.get("target-user-id") == null || tags.get("target-user-id").isEmpty() ? -1 : Long.parseLong(tags.get("target-user-id")));
-                    this.onUserTimedOut(ch.getUser(l[1].substring(1)), ch, duration, roomId, targetUserId, tags.get("ban-reason"));
+                    long tmiSentTs = (tags.get("tmi-sent-ts") == null || tags.get("tmi-sent-ts").isEmpty() ? -1 : Long.parseLong(tags.get("tmi-sent-ts")));
+                    this.onUserTimedOut(ch.getUser(l[1].substring(1)), ch, duration, roomId, targetUserId, tmiSentTs, tags.get("ban-reason"));
                 } catch (NullPointerException npe) {
                 }
             }
@@ -2736,9 +2741,10 @@ public abstract class PircBot implements ReplyConstants {
      * ban is permanent.
      * @param roomId ID of the channel where the user was timed out
      * @param targetUserId ID of the user who was timed out
+     * @param tmiSentTs UNIX Timestamp the line was sent from Twitch IRCv3 Servers
      * @param reason Reason user was timed out.
      */
-    protected void onUserTimedOut(User user, Channel channel, int duration, long roomId, long targetUserId, String reason) {
+    protected void onUserTimedOut(User user, Channel channel, long duration, long roomId, long targetUserId, long tmiSentTs, String reason) {
 
     }
 
@@ -3601,7 +3607,8 @@ public abstract class PircBot implements ReplyConstants {
      * @param targetUserId Used in some NOTICE lines on Twitch.tv
      * @param mod User moderator
      * @param noisy If a message is detected as spam by Twitch.tv IRCv3 tags
-     * @param emoteOnly If a message is contains only emotes, as detected by Twitch.tv IRCv3 tags
+     * @param emoteOnly If a message is contains only emotes, as detected by
+     * Twitch.tv IRCv3 tags
      * @param userType Usertype
      * @param emotes emote String
      * @param badges Badges string
