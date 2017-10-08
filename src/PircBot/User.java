@@ -34,12 +34,13 @@ public class User implements Comparable {
     private boolean isAFK;
     private boolean isOP;
     private boolean isVoice;
+    private boolean isMod;
     private String _channel;
     private static String[] bots = {"wow_deku_onehand", "lavasbot", "facts_bot", "totally_not_facts_bot", "23forces", "twitchplaysleaderboard", "recordingbot", "twitchnotify", "io_ol7bot", "tppstatbot", "tppstatsbot", "pikalaxbot", "wowitsbot", "wallbot303", "frunky5", "wow_statsbot_onehand", "tppbankbot", "tppmodbot", "tppinfobot", "kmsbot", "trainertimmybot", "wow_battlebot_onehand", "groudonger"};
     private String previousMessage;
     private String color;
-    private long subscriber;
-    private long turbo;
+    private boolean subscriber;
+    private boolean turbo;
     private long targetUserId;
     private String emotes;
     private String msgId;
@@ -60,8 +61,8 @@ public class User implements Comparable {
     private long consecutiveMonths;
     private long bits;
     private long sentTs;
-    private long tmiSentTs;
-    private long mod;
+    private long tmiSentTs;     
+    private long mod; //DO NOT USE - Will be removed in next version
     private boolean noisy;
     private boolean emoteOnly;
 
@@ -91,11 +92,11 @@ public class User implements Comparable {
         this.isVoice = false;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = 0;
-        this.mod = 0;
+        this.subscriber = false;
+        this.isMod = false;
         this.noisy = false;
         this.emoteOnly = false;
-        this.turbo = 0;
+        this.turbo = false;
         this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
@@ -146,11 +147,11 @@ public class User implements Comparable {
         this.isVoice = false;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = 0;
-        this.mod = 0;
+        this.subscriber = false;
+        this.isMod = false;
         this.noisy = false;
         this.emoteOnly = false;
-        this.turbo = 0;
+        this.turbo = false;
         this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
@@ -192,11 +193,11 @@ public class User implements Comparable {
         this.isVoice = false;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = 0;
-        this.mod = 0;
+        this.subscriber = false;
+        this.isMod = false;
         this.noisy = false;
         this.emoteOnly = false;
-        this.turbo = 0;
+        this.turbo = false;
         this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
@@ -229,8 +230,9 @@ public class User implements Comparable {
      * @param isAFK Is user AFK?
      * @param isOP Is user OP?
      * @param isVoice Is user voiced?
+     * @param isMod Is user a moderator?
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, boolean isMod) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -240,11 +242,11 @@ public class User implements Comparable {
         this._channel = _channel;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = 0;
-        this.mod = 0;
+        this.subscriber = false;
+        this.isMod = isMod;
         this.noisy = false;
         this.emoteOnly = false;
-        this.turbo = 0;
+        this.turbo = false;
         this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
@@ -278,12 +280,12 @@ public class User implements Comparable {
      * @param isOP Is user OP?
      * @param isVoice Is user voiced?
      * @param color Color String of the User
-     * @param getSubscriber Amount of months an user has been subscriber to a
-     * channel
-     * @param getMod Is user a Channel Moderator?
+     * @param sub Is user a sub?
+     * @param isMod Is user a Channel Moderator?
      * @param noisy If a message is detected as spam by Twitch.TV IRCv3 tags
-     * @param emoteOnly If a message is contains only emotes, as detected by Twitch.tv IRCv3 tags
-     * @param getTurbo Is user a Turbo user?
+     * @param emoteOnly If a message is contains only emotes, as detected by
+     * Twitch.tv IRCv3 tags
+     * @param isTurbo Is user a Turbo user?
      * @param getTargetUserId target-user-id used for Timeouts and NOTICEs
      * @param emotes Emote String of the User
      * @param msgId Twitch System Message Id
@@ -311,7 +313,7 @@ public class User implements Comparable {
      * @param sentTs Timestamp of a message.
      * @param tmiSentTs Timestamp of a message. (Again?)
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, long getSubscriber, long getMod, boolean noisy, boolean emoteOnly, long getTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean sub, boolean isMod, boolean noisy, boolean emoteOnly, boolean isTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -321,11 +323,12 @@ public class User implements Comparable {
         this._channel = _channel;
         this.previousMessage = "";
         this.color = color;
-        this.subscriber = 0;
-        this.mod = getMod;
+        this.subscriber = sub;
+        this.isMod = isMod;
+        //this.mod = getMod;
         this.noisy = noisy;
         this.emoteOnly = emoteOnly;
-        this.turbo = getTurbo;
+        this.turbo = isTurbo;
         this.targetUserId = getTargetUserId;
         this.emotes = emotes;
         this.msgId = msgId;
@@ -365,11 +368,11 @@ public class User implements Comparable {
         this.isVoice = user.isVoice;
         this.previousMessage = "";
         this.color = "";
-        this.subscriber = 0;
-        this.mod = 0;
+        this.subscriber = false;
+        this.isMod = false;
         this.noisy = false;
         this.emoteOnly = false;
-        this.turbo = 0;
+        this.turbo = false;
         this.targetUserId = 0;
         this.emotes = "";
         this.msgId = "";
@@ -788,20 +791,21 @@ public class User implements Comparable {
         this.messageId = messageId;
     }
 
-    public long getSubscriber() {
+    public boolean isSubscriber() {
         return subscriber;
     }
 
-    public void setSubscriber(long subscriber) {
+    public void setSubscriber(boolean subscriber) {
         this.subscriber = subscriber;
     }
 
-    public long getMod() {
-        return mod;
+    public boolean isMod(){
+        return isMod;
     }
+    
 
-    public void setMod(long mod) {
-        this.mod = mod;
+    public void setMod(boolean mod) {
+        this.isMod = mod;
     }
 
     /**
@@ -840,11 +844,11 @@ public class User implements Comparable {
         this.emoteOnly = emoteOnly;
     }
 
-    public long getTurbo() {
+    public boolean isTurbo() {
         return turbo;
     }
 
-    public void setTurbo(long turbo) {
+    public void setTurbo(boolean turbo) {
         this.turbo = turbo;
     }
 
