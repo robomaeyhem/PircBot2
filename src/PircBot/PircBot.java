@@ -362,6 +362,20 @@ public abstract class PircBot implements ReplyConstants {
      * @return Channel object created during this process.
      */
     public Channel joinChannel(String channel) {
+        try {
+        channel = channel.replaceAll("\\s+", "");
+        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+        channel = channel.replaceAll("\\,+", "");
+        channel = channel.replaceAll("\\:+", "");
+        channel = channel.replaceAll("\\&+", "");
+        channel = channel.replaceAll("\\#+", "");
+        channel = channel.replaceAll("\\++", "");
+        channel = channel.replaceAll("\\!+", "");
+        channel = "#" + channel;
+        }
+        catch (Exception ex) {
+            System.err.println("[EXCEPTION] " + ex.toString());
+        }
         this.sendRawLine("JOIN " + channel);
         Channel chan = new Channel(channel, this.getServer());
         this._channels.put(channel, chan);
@@ -376,6 +390,20 @@ public abstract class PircBot implements ReplyConstants {
      * @return Channel object created during this process.
      */
     public Channel joinChannel(String channel, String key) {
+        try {
+        channel = channel.replaceAll("\\s+", "");
+        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+        channel = channel.replaceAll("\\,+", "");
+        channel = channel.replaceAll("\\:+", "");
+        channel = channel.replaceAll("\\&+", "");
+        channel = channel.replaceAll("\\#+", "");
+        channel = channel.replaceAll("\\++", "");
+        channel = channel.replaceAll("\\!+", "");
+        channel = "#" + channel;
+        }
+        catch (Exception ex) {
+            System.err.println("[EXCEPTION] " + ex.toString());
+        }
         return this.joinChannel(channel + " " + key);
     }
 
@@ -385,6 +413,20 @@ public abstract class PircBot implements ReplyConstants {
      * @param channel The name of the channel to leave.
      */
     public void partChannel(String channel) {
+        try {
+        channel = channel.replaceAll("\\s+", "");
+        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+        channel = channel.replaceAll("\\,+", "");
+        channel = channel.replaceAll("\\:+", "");
+        channel = channel.replaceAll("\\&+", "");
+        channel = channel.replaceAll("\\#+", "");
+        channel = channel.replaceAll("\\++", "");
+        channel = channel.replaceAll("\\!+", "");
+        channel = "#" + channel;
+        }
+        catch (Exception ex) {
+            System.err.println("[EXCEPTION] " + ex.toString());
+        }
         this.sendRawLine("PART " + channel);
         this._channels.remove(channel);
     }
@@ -396,6 +438,20 @@ public abstract class PircBot implements ReplyConstants {
      * @param reason The reason for parting the channel.
      */
     public void partChannel(String channel, String reason) {
+        try {
+        channel = channel.replaceAll("\\s+", "");
+        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+        channel = channel.replaceAll("\\,+", "");
+        channel = channel.replaceAll("\\:+", "");
+        channel = channel.replaceAll("\\&+", "");
+        channel = channel.replaceAll("\\#+", "");
+        channel = channel.replaceAll("\\++", "");
+        channel = channel.replaceAll("\\!+", "");
+        channel = "#" + channel;
+        }
+        catch (Exception ex) {
+            System.err.println("[EXCEPTION] " + ex.toString());
+        }
         this.sendRawLine("PART " + channel + " :" + reason);
         this._channels.remove(channel);
     }
@@ -2735,7 +2791,8 @@ public abstract class PircBot implements ReplyConstants {
      * ban is permanent.
      * @param roomId ID of the channel where the user was timed out
      * @param targetUserId ID of the user who was timed out
-     * @param tmiSentTs UNIX Timestamp the line was sent from Twitch IRCv3 Servers
+     * @param tmiSentTs UNIX Timestamp the line was sent from Twitch IRCv3
+     * Servers
      * @param reason Reason user was timed out.
      */
     protected void onUserTimedOut(User user, Channel channel, long duration, long roomId, long targetUserId, long tmiSentTs, String reason) {
@@ -3423,6 +3480,20 @@ public abstract class PircBot implements ReplyConstants {
      *
      */
     public final ArrayList<User> getUsers(String channel) {
+        try {
+        channel = channel.replaceAll("\\s+", "");
+        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+        channel = channel.replaceAll("\\,+", "");
+        channel = channel.replaceAll("\\:+", "");
+        channel = channel.replaceAll("\\&+", "");
+        channel = channel.replaceAll("\\#+", "");
+        channel = channel.replaceAll("\\++", "");
+        channel = channel.replaceAll("\\!+", "");
+        channel = "#" + channel;
+        }
+        catch (Exception ex) {
+            System.err.println("[EXCEPTION] " + ex.toString());
+        }
         channel = channel.toLowerCase();
         synchronized (_channels) {
             if (_channels.get(channel) == null) {
