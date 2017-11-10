@@ -61,7 +61,10 @@ public class User implements Comparable {
     private long consecutiveMonths;
     private long bits;
     private long sentTs;
-    private long tmiSentTs;     
+    private long tmiSentTs;
+    private long sourceViewerCount;
+    private String sourceDisplayName;
+    private String sourceName;
     private long mod; //DO NOT USE - Will be removed in next version
     private boolean noisy;
     private boolean emoteOnly;
@@ -118,6 +121,9 @@ public class User implements Comparable {
         this.sentTs = 0;
         this.tmiSentTs = 0;
         this.messageId = "";
+        this.sourceViewerCount = 0;
+        this.sourceDisplayName = "";
+        this.sourceName = "";
     }
 
     /**
@@ -173,6 +179,9 @@ public class User implements Comparable {
         this.sentTs = 0;
         this.tmiSentTs = 0;
         this.messageId = "";
+        this.sourceViewerCount = 0;
+        this.sourceDisplayName = "";
+        this.sourceName = "";
     }
 
     /**
@@ -219,6 +228,9 @@ public class User implements Comparable {
         this.sentTs = 0;
         this.tmiSentTs = 0;
         this.messageId = "";
+        this.sourceViewerCount = 0;
+        this.sourceDisplayName = "";
+        this.sourceName = "";
     }
 
     /**
@@ -268,6 +280,9 @@ public class User implements Comparable {
         this.sentTs = 0;
         this.tmiSentTs = 0;
         this.messageId = "";
+        this.sourceViewerCount = 0;
+        this.sourceDisplayName = "";
+        this.sourceName = "";
     }
 
     /**
@@ -312,8 +327,12 @@ public class User implements Comparable {
      * @param bits Amount of Bits user has used.
      * @param sentTs Timestamp of a message.
      * @param tmiSentTs Timestamp of a message. (Again?)
+     * @param sourceViewerCount Viewer count of a raiding channel
+     * @param sourceDisplayName DisplayName with proper capitalization of
+     * raiding channel
+     * @param sourceName Lowercase name of raiding channel
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean sub, boolean isMod, boolean noisy, boolean emoteOnly, boolean isTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean sub, boolean isMod, boolean noisy, boolean emoteOnly, boolean isTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId, String sourceDisplayName, String sourceName, long sourceViewerCount) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -350,6 +369,9 @@ public class User implements Comparable {
         this.subName = subName;
         this.emoteSets = emoteSets;
         this.messageId = messageId;
+        this.sourceViewerCount = sourceViewerCount;
+        this.sourceDisplayName = sourceDisplayName;
+        this.sourceName = sourceName;
     }
 
     /**
@@ -394,6 +416,9 @@ public class User implements Comparable {
         this.subName = "";
         this.emoteSets = "";
         this.messageId = "";
+        this.sourceViewerCount = 0;
+        this.sourceDisplayName = "";
+        this.sourceName = "";
     }
 
     /**
@@ -678,6 +703,24 @@ public class User implements Comparable {
     }
 
     /**
+     * Get Viewer Count for a raiding channel
+     *
+     * @return sourceViewerCount
+     */
+    public long getSourceViewerCount() {
+        return this.sourceViewerCount;
+    }
+
+    /**
+     * Set Viewer Count for a raiding channel
+     *
+     * @param sourceViewerCount sent-ts
+     */
+    public void setSourceViewerCount(long sourceViewerCount) {
+        this.sourceViewerCount = sourceViewerCount;
+    }
+
+    /**
      * Get the timestamp for a message (if tags are enabled) (Again?)
      *
      * @return tmiSentTs
@@ -791,6 +834,22 @@ public class User implements Comparable {
         this.messageId = messageId;
     }
 
+    public String getSourceDisplayName() {
+        return sourceDisplayName;
+    }
+
+    public void setSourceDisplayName(String sourceDisplayName) {
+        this.sourceDisplayName = sourceDisplayName;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
     public boolean isSubscriber() {
         return subscriber;
     }
@@ -799,10 +858,9 @@ public class User implements Comparable {
         this.subscriber = subscriber;
     }
 
-    public boolean isMod(){
+    public boolean isMod() {
         return isMod;
     }
-    
 
     public void setMod(boolean mod) {
         this.isMod = mod;

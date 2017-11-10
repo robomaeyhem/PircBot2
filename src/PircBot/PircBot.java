@@ -363,17 +363,16 @@ public abstract class PircBot implements ReplyConstants {
      */
     public Channel joinChannel(String channel) {
         try {
-        channel = channel.replaceAll("\\s+", "");
-        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
-        channel = channel.replaceAll("\\,+", "");
-        channel = channel.replaceAll("\\:+", "");
-        channel = channel.replaceAll("\\&+", "");
-        channel = channel.replaceAll("\\#+", "");
-        channel = channel.replaceAll("\\++", "");
-        channel = channel.replaceAll("\\!+", "");
-        channel = "#" + channel;
-        }
-        catch (Exception ex) {
+            channel = channel.replaceAll("\\s+", "");
+            channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+            channel = channel.replaceAll("\\,+", "");
+            channel = channel.replaceAll("\\:+", "");
+            channel = channel.replaceAll("\\&+", "");
+            channel = channel.replaceAll("\\#+", "");
+            channel = channel.replaceAll("\\++", "");
+            channel = channel.replaceAll("\\!+", "");
+            channel = "#" + channel;
+        } catch (Exception ex) {
             System.err.println("[EXCEPTION] " + ex.toString());
         }
         this.sendRawLine("JOIN " + channel);
@@ -391,17 +390,16 @@ public abstract class PircBot implements ReplyConstants {
      */
     public Channel joinChannel(String channel, String key) {
         try {
-        channel = channel.replaceAll("\\s+", "");
-        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
-        channel = channel.replaceAll("\\,+", "");
-        channel = channel.replaceAll("\\:+", "");
-        channel = channel.replaceAll("\\&+", "");
-        channel = channel.replaceAll("\\#+", "");
-        channel = channel.replaceAll("\\++", "");
-        channel = channel.replaceAll("\\!+", "");
-        channel = "#" + channel;
-        }
-        catch (Exception ex) {
+            channel = channel.replaceAll("\\s+", "");
+            channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+            channel = channel.replaceAll("\\,+", "");
+            channel = channel.replaceAll("\\:+", "");
+            channel = channel.replaceAll("\\&+", "");
+            channel = channel.replaceAll("\\#+", "");
+            channel = channel.replaceAll("\\++", "");
+            channel = channel.replaceAll("\\!+", "");
+            channel = "#" + channel;
+        } catch (Exception ex) {
             System.err.println("[EXCEPTION] " + ex.toString());
         }
         return this.joinChannel(channel + " " + key);
@@ -414,17 +412,16 @@ public abstract class PircBot implements ReplyConstants {
      */
     public void partChannel(String channel) {
         try {
-        channel = channel.replaceAll("\\s+", "");
-        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
-        channel = channel.replaceAll("\\,+", "");
-        channel = channel.replaceAll("\\:+", "");
-        channel = channel.replaceAll("\\&+", "");
-        channel = channel.replaceAll("\\#+", "");
-        channel = channel.replaceAll("\\++", "");
-        channel = channel.replaceAll("\\!+", "");
-        channel = "#" + channel;
-        }
-        catch (Exception ex) {
+            channel = channel.replaceAll("\\s+", "");
+            channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+            channel = channel.replaceAll("\\,+", "");
+            channel = channel.replaceAll("\\:+", "");
+            channel = channel.replaceAll("\\&+", "");
+            channel = channel.replaceAll("\\#+", "");
+            channel = channel.replaceAll("\\++", "");
+            channel = channel.replaceAll("\\!+", "");
+            channel = "#" + channel;
+        } catch (Exception ex) {
             System.err.println("[EXCEPTION] " + ex.toString());
         }
         this.sendRawLine("PART " + channel);
@@ -439,17 +436,16 @@ public abstract class PircBot implements ReplyConstants {
      */
     public void partChannel(String channel, String reason) {
         try {
-        channel = channel.replaceAll("\\s+", "");
-        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
-        channel = channel.replaceAll("\\,+", "");
-        channel = channel.replaceAll("\\:+", "");
-        channel = channel.replaceAll("\\&+", "");
-        channel = channel.replaceAll("\\#+", "");
-        channel = channel.replaceAll("\\++", "");
-        channel = channel.replaceAll("\\!+", "");
-        channel = "#" + channel;
-        }
-        catch (Exception ex) {
+            channel = channel.replaceAll("\\s+", "");
+            channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+            channel = channel.replaceAll("\\,+", "");
+            channel = channel.replaceAll("\\:+", "");
+            channel = channel.replaceAll("\\&+", "");
+            channel = channel.replaceAll("\\#+", "");
+            channel = channel.replaceAll("\\++", "");
+            channel = channel.replaceAll("\\!+", "");
+            channel = "#" + channel;
+        } catch (Exception ex) {
             System.err.println("[EXCEPTION] " + ex.toString());
         }
         this.sendRawLine("PART " + channel + " :" + reason);
@@ -1276,12 +1272,30 @@ public abstract class PircBot implements ReplyConstants {
                             user.setMessageId(value);
                         } else if (key.equalsIgnoreCase("tmi-sent-ts")) {
                             user.setTmiSentTs(Long.parseLong(value));
+                        } else if (key.equalsIgnoreCase("msg-param-displayName")) {
+                            try {
+                                user.setSourceDisplayName(value);
+                            } catch (Exception ex) {
+                                user.setSourceDisplayName("");
+                            }
+                        } else if (key.equalsIgnoreCase("msg-param-login")) {
+                            try {
+                                user.setSourceName(value);
+                            } catch (Exception ex) {
+                                user.setSourceName("");
+                            }
+                        } else if (key.equalsIgnoreCase("msg-param-viewerCount")) {
+                            try {
+                                user.setSourceViewerCount(Long.parseLong(value));
+                            } catch (Exception ex) {
+                                user.setSourceViewerCount(-1);
+                            }
                         }
                     }
                     String resubMessage = "";
                     try {
                         resubMessage = line.split(channel + " ", 2)[1];
-                    } catch (ArrayIndexOutOfBoundsException ex) {
+                    } catch (Exception ex) {
                         resubMessage = "";
                     }
                     this.onUserNotice(channel, user, resubMessage);
@@ -1427,6 +1441,12 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         targetUserId = -1;
                     }
+                    long sourceViewerCount;
+                    try {
+                        sourceViewerCount = Long.parseLong(tags.get("msg-param-viewerCount"));
+                    } catch (Exception ex) {
+                        sourceViewerCount = -1;
+                    }
                     boolean mod;
                     try {
                         mod = tags.get("mod").equals("1");
@@ -1434,7 +1454,7 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         mod = false;
                     }
-                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, noisy, emoteOnly, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs, targetUserId);
+                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, noisy, emoteOnly, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs, targetUserId, tags.get("msg-param-displayName"), tags.get("msg-param-login"), sourceViewerCount);
                     break;
             }
         }
@@ -3481,17 +3501,16 @@ public abstract class PircBot implements ReplyConstants {
      */
     public final ArrayList<User> getUsers(String channel) {
         try {
-        channel = channel.replaceAll("\\s+", "");
-        channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
-        channel = channel.replaceAll("\\,+", "");
-        channel = channel.replaceAll("\\:+", "");
-        channel = channel.replaceAll("\\&+", "");
-        channel = channel.replaceAll("\\#+", "");
-        channel = channel.replaceAll("\\++", "");
-        channel = channel.replaceAll("\\!+", "");
-        channel = "#" + channel;
-        }
-        catch (Exception ex) {
+            channel = channel.replaceAll("\\s+", "");
+            channel = channel.replaceAll("\\+", ""); // REMOVE ALL BELLS
+            channel = channel.replaceAll("\\,+", "");
+            channel = channel.replaceAll("\\:+", "");
+            channel = channel.replaceAll("\\&+", "");
+            channel = channel.replaceAll("\\#+", "");
+            channel = channel.replaceAll("\\++", "");
+            channel = channel.replaceAll("\\!+", "");
+            channel = "#" + channel;
+        } catch (Exception ex) {
             System.err.println("[EXCEPTION] " + ex.toString());
         }
         channel = channel.toLowerCase();
@@ -3697,9 +3716,13 @@ public abstract class PircBot implements ReplyConstants {
      * @param msgId Twitch's type of notice
      * @param systemMsgId Twitch's Notice Message ID
      * @param sentTs Unix timestamp of a message
+     * @param sourceViewerCount Viewer count of a raiding channel
+     * @param sourceDisplayName DisplayName with proper capitalization of
+     * raiding channel
+     * @param sourceName Lowercase name of raiding channel
      * @param tmiSentTs Unix timestamp of a message (Again?)
      */
-    private void updateUser(String username, String color, boolean subscriber, boolean turbo, boolean noisy, boolean emoteOnly, boolean mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs, long targetUserId) {
+    private void updateUser(String username, String color, boolean subscriber, boolean turbo, boolean noisy, boolean emoteOnly, boolean mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs, long targetUserId, String sourceDisplayName, String sourceName, long sourceViewerCount) {
         synchronized (_channels) {
             for (Channel el : _channels.values()) {
                 User user = el.getUser(username);
@@ -3733,6 +3756,9 @@ public abstract class PircBot implements ReplyConstants {
                 user.setBits(bits);
                 user.setSentTs(sentTs);
                 user.setTmiSentTs(tmiSentTs);
+                user.setSourceDisplayName(sourceDisplayName);
+                user.setSourceName(sourceName);
+                user.setSourceViewerCount(sourceViewerCount);
             }
         }
     }
