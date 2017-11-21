@@ -63,7 +63,11 @@ public class User implements Comparable {
     private long sentTs;
     private long tmiSentTs;
     private long sourceViewerCount;
+    private long recipientId;
     private String sourceDisplayName;
+    private String recipientDisplayName;
+    private String recipientUserName;
+    private String ritualName;
     private String sourceName;
     private long mod; //DO NOT USE - Will be removed in next version
     private boolean noisy;
@@ -122,7 +126,11 @@ public class User implements Comparable {
         this.tmiSentTs = 0;
         this.messageId = "";
         this.sourceViewerCount = 0;
+        this.recipientId = 0;
         this.sourceDisplayName = "";
+        this.recipientDisplayName = "";
+        this.recipientUserName = "";
+        this.ritualName = "";
         this.sourceName = "";
     }
 
@@ -182,6 +190,10 @@ public class User implements Comparable {
         this.sourceViewerCount = 0;
         this.sourceDisplayName = "";
         this.sourceName = "";
+        this.recipientId = 0;
+        this.recipientDisplayName = "";
+        this.recipientUserName = "";
+        this.ritualName = "";
     }
 
     /**
@@ -231,6 +243,10 @@ public class User implements Comparable {
         this.sourceViewerCount = 0;
         this.sourceDisplayName = "";
         this.sourceName = "";
+        this.recipientId = 0;
+        this.recipientDisplayName = "";
+        this.recipientUserName = "";
+        this.ritualName = "";
     }
 
     /**
@@ -283,6 +299,10 @@ public class User implements Comparable {
         this.sourceViewerCount = 0;
         this.sourceDisplayName = "";
         this.sourceName = "";
+        this.recipientId = 0;
+        this.recipientDisplayName = "";
+        this.recipientUserName = "";
+        this.ritualName = "";
     }
 
     /**
@@ -331,8 +351,17 @@ public class User implements Comparable {
      * @param sourceDisplayName DisplayName with proper capitalization of
      * raiding channel
      * @param sourceName Lowercase name of raiding channel
+     * @param recipientDisplayName DisplayName of a user receiving a Gift
+     * Subscription
+     * @param recipientUserName Lowercase name of a user receiving a Gift
+     * Subscription
+     * @param recipientId User ID of a user recLeiving a Gift Subscription
+     * @param ritualName Ritual name. Many channels have special rituals to
+     * celebrate viewer milestones when they are shared. The rituals notice
+     * extends the sharing of these messages to other viewer milestones
+     * (initially, a new viewer chatting for the first time).
      */
-    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean sub, boolean isMod, boolean noisy, boolean emoteOnly, boolean isTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId, String sourceDisplayName, String sourceName, long sourceViewerCount) {
+    public User(String _nick, String _channel, long lastMessage, boolean isAFK, boolean isOP, boolean isVoice, String color, boolean sub, boolean isMod, boolean noisy, boolean emoteOnly, boolean isTurbo, String userType, String emotes, String badges, String systemMsg, String userLogin, String subUser, String subPlan, String subName, String messageId, String emoteSets, String msgId, String systemMsgId, long roomId, long whisperMsgId, String whisperThreadId, long bits, long consecutiveMonths, long sentTs, long tmiSentTs, long getTargetUserId, String sourceDisplayName, String sourceName, long sourceViewerCount, String recipientDisplayName, String recipientUserName, long recipientId, String ritualName) {
         this._nick = _nick;
         this.displayName = _nick;
         this.lastMessage = lastMessage;
@@ -372,6 +401,10 @@ public class User implements Comparable {
         this.sourceViewerCount = sourceViewerCount;
         this.sourceDisplayName = sourceDisplayName;
         this.sourceName = sourceName;
+        this.recipientId = recipientId;
+        this.recipientDisplayName = recipientDisplayName;
+        this.recipientUserName = recipientUserName;
+        this.ritualName = ritualName;
     }
 
     /**
@@ -419,6 +452,10 @@ public class User implements Comparable {
         this.sourceViewerCount = 0;
         this.sourceDisplayName = "";
         this.sourceName = "";
+        this.recipientId = 0;
+        this.recipientDisplayName = "";
+        this.recipientUserName = "";
+        this.ritualName = "";
     }
 
     /**
@@ -714,10 +751,28 @@ public class User implements Comparable {
     /**
      * Set Viewer Count for a raiding channel
      *
-     * @param sourceViewerCount sent-ts
+     * @param sourceViewerCount msg-param-viewerCount
      */
     public void setSourceViewerCount(long sourceViewerCount) {
         this.sourceViewerCount = sourceViewerCount;
+    }
+
+    /**
+     * Get User ID for an user receiving a Subscription Gift
+     *
+     * @return recipientId
+     */
+    public long getRecipientId() {
+        return this.recipientId;
+    }
+
+    /**
+     * Set User ID for an user receiving a Subscription Gift
+     *
+     * @param recipientId msg-param-recipient-id
+     */
+    public void setRecipientId(long recipientId) {
+        this.recipientId = recipientId;
     }
 
     /**
@@ -848,6 +903,30 @@ public class User implements Comparable {
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+
+    public String getRecipientDisplayName() {
+        return recipientDisplayName;
+    }
+
+    public void setRecipientDisplayName(String recipientDisplayName) {
+        this.recipientDisplayName = recipientDisplayName;
+    }
+
+    public String getRecipientUserName() {
+        return recipientUserName;
+    }
+
+    public void setRecipientUserName(String recipientUserName) {
+        this.recipientUserName = recipientUserName;
+    }
+
+    public String getRitualName() {
+        return ritualName;
+    }
+
+    public void setRitualName(String ritualName) {
+        this.ritualName = ritualName;
     }
 
     public boolean isSubscriber() {

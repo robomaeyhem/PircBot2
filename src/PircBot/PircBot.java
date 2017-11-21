@@ -1284,6 +1284,30 @@ public abstract class PircBot implements ReplyConstants {
                             } catch (Exception ex) {
                                 user.setSourceName("");
                             }
+                        } else if (key.equalsIgnoreCase("msg-param-recipient-display-name")) {
+                            try {
+                                user.setRecipientDisplayName(value);
+                            } catch (Exception ex) {
+                                user.setRecipientDisplayName("");
+                            }
+                        } else if (key.equalsIgnoreCase("msg-param-recipient-user-name")) {
+                            try {
+                                user.setRecipientUserName(value);
+                            } catch (Exception ex) {
+                                user.setRecipientUserName("");
+                            }
+                        } else if (key.equalsIgnoreCase("msg-param-ritual-name")) {
+                            try {
+                                user.setRitualName(value);
+                            } catch (Exception ex) {
+                                user.setRitualName("");
+                            }
+                        } else if (key.equalsIgnoreCase("msg-param-recipient-id")) {
+                            try {
+                                user.setRecipientId(Long.parseLong(value));
+                            } catch (Exception ex) {
+                                user.setRecipientId(-1);
+                            }
                         } else if (key.equalsIgnoreCase("msg-param-viewerCount")) {
                             try {
                                 user.setSourceViewerCount(Long.parseLong(value));
@@ -1447,6 +1471,12 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         sourceViewerCount = -1;
                     }
+                    long recipientId;
+                    try {
+                        recipientId = Long.parseLong(tags.get("msg-param-recipient-id"));
+                    } catch (Exception ex) {
+                        recipientId = -1;
+                    }
                     boolean mod;
                     try {
                         mod = tags.get("mod").equals("1");
@@ -1454,7 +1484,7 @@ public abstract class PircBot implements ReplyConstants {
                     } catch (Exception ex) {
                         mod = false;
                     }
-                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, noisy, emoteOnly, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs, targetUserId, tags.get("msg-param-displayName"), tags.get("msg-param-login"), sourceViewerCount);
+                    updateUser(tags.get("display-name"), tags.get("color"), sub, turbo, noisy, emoteOnly, mod, tags.get("user-type"), userID, roomId, whisperMsgId, consecutiveMonths, tags.get("emotes"), tags.get("badges"), tags.get("thread-id"), tags.get("id"), bits, tags.get("emote-sets"), tags.get("msg-id"), tags.get("msg-id"), tags.get("system-msg"), tags.get("login"), tags.get("user"), tags.get("msg-param-sub-plan"), tags.get("msg-param-sub-plan-name"), sentTs, tmiSentTs, targetUserId, tags.get("msg-param-displayName"), tags.get("msg-param-login"), sourceViewerCount, tags.get("msg-param-recipient-display-name"), tags.get("msg-param-recipient-user-name"), recipientId, tags.get("msg-param-ritual-name"));
                     break;
             }
         }
@@ -3720,9 +3750,18 @@ public abstract class PircBot implements ReplyConstants {
      * @param sourceDisplayName DisplayName with proper capitalization of
      * raiding channel
      * @param sourceName Lowercase name of raiding channel
+     * @param recipientDisplayName DisplayName of a user receiving a Gift
+     * Subscription
+     * @param recipientUserName Lowercase name of a user receiving a Gift
+     * Subscription
+     * @param recipientId User ID of a user recLeiving a Gift Subscription
+     * @param ritualName Ritual name. Many channels have special rituals to
+     * celebrate viewer milestones when they are shared. The rituals notice
+     * extends the sharing of these messages to other viewer milestones
+     * (initially, a new viewer chatting for the first time).
      * @param tmiSentTs Unix timestamp of a message (Again?)
      */
-    private void updateUser(String username, String color, boolean subscriber, boolean turbo, boolean noisy, boolean emoteOnly, boolean mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs, long targetUserId, String sourceDisplayName, String sourceName, long sourceViewerCount) {
+    private void updateUser(String username, String color, boolean subscriber, boolean turbo, boolean noisy, boolean emoteOnly, boolean mod, String userType, long id, long roomId, long whisperMsgId, long consecutiveMonths, String emotes, String badges, String whisperThreadId, String messageId, long bits, String emoteSets, String msgId, String sytemMsgId, String systemMsg, String userLogin, String subUser, String subPlan, String subName, long sentTs, long tmiSentTs, long targetUserId, String sourceDisplayName, String sourceName, long sourceViewerCount, String recipientDisplayName, String recipientUserName, long recipientId, String ritualName) {
         synchronized (_channels) {
             for (Channel el : _channels.values()) {
                 User user = el.getUser(username);
@@ -3757,6 +3796,10 @@ public abstract class PircBot implements ReplyConstants {
                 user.setSentTs(sentTs);
                 user.setTmiSentTs(tmiSentTs);
                 user.setSourceDisplayName(sourceDisplayName);
+                user.setRecipientDisplayName(recipientDisplayName);
+                user.setRecipientUserName(recipientUserName);
+                user.setRecipientId(recipientId);
+                user.setRitualName(ritualName);
                 user.setSourceName(sourceName);
                 user.setSourceViewerCount(sourceViewerCount);
             }
